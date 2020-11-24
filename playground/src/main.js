@@ -1,13 +1,36 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+// import { createApp } from 'vue'
+// import App from './App.vue'
 import './css/genesis.css'
 import './css/preflight.css'
-import { Generator } from './utils/text'
+import { createGenerator } from './utils/text'
 
-createApp(App)
-  .mount('#app')
+// createApp(App)
+//   .mount('#app')
 
-const generator = new Generator({
-  wordInterval: [200, 600]
+const generator = createGenerator()
+
+generator.start()
+
+generator.on('word-generated', ({ word, index }) => {
+  console.log('Word generated', word, index)
 })
-console.log(generator)
+
+generator.on('generator-created', (val) => {
+  console.warn('CREATED', val)
+})
+
+generator.on('generator-ended', (val) => {
+  console.warn('ENDED', val)
+})
+
+generator.on('sentence-generated', ({ sentence, index }) => {
+  console.log('Sentence generated', index)
+})
+
+generator.on('word-interval-length-changed', val => {
+  console.log('WORD INTERVAL LENGTH CHANGED', val)
+})
+
+setTimeout(() => {
+  generator.stop()
+}, 60000)

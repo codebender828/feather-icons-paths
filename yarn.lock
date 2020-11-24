@@ -535,7 +535,7 @@
     "@vue/compiler-dom" "3.0.2"
     "@vue/shared" "3.0.2"
 
-"@vue/reactivity@3.0.2":
+"@vue/reactivity@3.0.2", "@vue/reactivity@^3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@vue/reactivity/-/reactivity-3.0.2.tgz#42ed5af6025b494a5e69b05169fcddf04eebfe77"
   integrity sha512-GdRloNcBar4yqWGXOcba1t//j/WizwfthfPUYkjcIPHjYnA/vTEQYp0C9+ZjPdinv1WRK1BSMeN/xj31kQES4A==
