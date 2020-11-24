@@ -51,6 +51,9 @@
     }
   },
   "dependencies": {
-    "lodash-es": "^4.17.15"
+    "@akkadu/kadukadu-dictionary": "^1.0.0",
+    "hyperscript": "^2.0.2",
+    "lodash-es": "^4.17.15",
+    "tippy.js": "^6.2.7"
   }
 }

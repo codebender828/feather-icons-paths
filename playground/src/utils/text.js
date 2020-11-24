@@ -96,5 +96,3 @@ export const createGenerator = (defaultOptions = DEFAULTS) => {
     defineSentenceLength
   }
 }
-
-console.log(createLorem(DEFAULTS.sentenceLength))
