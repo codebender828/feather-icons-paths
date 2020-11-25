@@ -52,8 +52,10 @@
   },
   "dependencies": {
     "@akkadu/kadukadu-dictionary": "^1.0.0",
+    "can-use-dom": "^0.1.0",
     "hyperscript": "^2.0.2",
     "lodash-es": "^4.17.15",
+    "otion": "^0.6.2",
     "tippy.js": "^6.2.7"
   }
 }

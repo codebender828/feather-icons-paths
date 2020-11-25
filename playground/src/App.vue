@@ -9,19 +9,21 @@
 </template>
 
 <script>
-import { defineComponent, inject } from 'vue'
+import { defineComponent, inject, onMounted } from 'vue'
 import { createKadukadu } from '@akkadu/kadukadu'
 
 export default defineComponent({
   name: 'App',
-  async setup () {
+  setup () {
     const generator = inject('$generator')
-    const { init } = createKadukadu()
-    const parse = await init()
+    onMounted(async () => {
+      const { init } = createKadukadu()
+      const parse = await init()
 
-    generator.start()
-    generator.on('sentence-generated', ({ sentence }) => {
-      parse(sentence)
+      generator.start()
+      generator.on('sentence-generated', ({ sentence }) => {
+        console.log(parse(sentence))
+      })
     })
   }
 })
