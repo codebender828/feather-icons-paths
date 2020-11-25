@@ -17,13 +17,29 @@ export default defineComponent({
   setup () {
     const generator = inject('$generator')
     onMounted(async () => {
-      const { init } = createKadukadu()
-      const parse = await init()
-
-      generator.start()
-      generator.on('sentence-generated', ({ sentence }) => {
-        console.log(parse(sentence))
+      const { init } = createKadukadu({
+        parserOptions: {},
+        pinyin: true,
+        showHSK: true,
+        showPopoverTranslations: true,
+        renderer: {
+          target: 'target'
+        }
       })
+
+      try {
+        let parse
+        init()
+          .then(parseFunc => {
+            parse = parseFunc
+          })
+        generator.start()
+        generator.on('sentence-generated', ({ sentence }) => {
+          console.log(parse(sentence))
+        })
+      } catch (error) {
+        console.error(error)
+      }
     })
   }
 })

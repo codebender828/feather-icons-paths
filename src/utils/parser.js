@@ -2,8 +2,6 @@
  * @typedef {{ traditional: Boolean, ignoreNotFound: false, extend: ParseExtendFunction }} ParserOptions
  */
 
-import { merge } from 'lodash-es'
-
 /**
  * @typedef {{ id: Number, hanzi: String, pinyin: String, translations: String[], hsk: Number, }} KadukaduWord
  */
@@ -13,6 +11,9 @@ import { merge } from 'lodash-es'
   * @param {KadukaduWord}
   * @returns {KadukaduWord}
   */
+
+import { merge } from 'lodash-es'
+import { createRenderer } from './renderer'
 
 /**
  * Sentence parser default options
@@ -47,43 +48,44 @@ export const createSentenceParser = (parserOptions) => {
   }
 
   const options = merge(PARSER_DEFAULT_OPTIONS, parserOptions)
-
   const { dictionary } = window.$kadukadu
 
-  console.log(dictionary['爱情'])
+  let renderId = 1
 
+  const render = createRenderer(options)
   /** Parser function */
   const parse = (sentence) => {
+    ++renderId
     const parsed = []
-    let _word
+    let word
 
     for (let i = 0; i < sentence.length; i++) {
       for (let j = 4; j > 0; j--) {
-        const word = sentence.substr(i, j)
-        if (j === 0 || word === '') continue
+        const testWord = sentence.substr(i, j)
+        if (j === 0 || testWord === '') continue
 
-        const query = dictionary[word]
+        const query = dictionary[testWord]
         if (query) {
-          const found = dictionary[word]
+          const found = dictionary[testWord]
           if (Array.isArray(found)) {
-            _word = found
+            word = found
           } else {
-            _word = found
+            word = found
           }
-          parsed.push(_word)
-          i += word.length - 1
+          parsed.push(word)
+          i += testWord.length - 1
           break
         } else {
           if (!options.ignoreNotFound) {
-            if (word.length === 1) {
+            if (testWord.length === 1) {
               parsed.push({
-                hanzi: word,
+                hanzi: testWord,
                 pinyin: undefined,
                 hsk: undefined,
                 id: undefined,
                 translations: []
               })
-              i += word.length - 1
+              i += testWord.length - 1
               break
             }
           }
@@ -91,7 +93,7 @@ export const createSentenceParser = (parserOptions) => {
       }
     }
 
-    return parsed
+    return render(parsed, renderId)
   }
 
   return parse

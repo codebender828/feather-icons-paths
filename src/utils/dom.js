@@ -11,3 +11,9 @@ export const bindToWindow = (object) => {
     assign(window, object)
   }
 }
+
+/** Query elements by selector */
+export const query = document.querySelector
+
+/** Gets element by id */
+export const getEl = canUseDom && document.getElementById

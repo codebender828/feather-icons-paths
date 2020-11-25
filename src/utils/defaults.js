@@ -1,4 +1,10 @@
-/** Kadukadu default options */
+/** @typedef {{sourceLanguage: String, targetLanguage: String, plugins?: Function[], showPopoverTranslations?: Boolean, showHSK?: Boolean, pinyin?: Boolean, ignoreNotFound?: Boolean, renderer: RendererOptions }} KadukaduOptions */
+/** @typedef {target: String, lineSpacing: Number }} RendererOptions */
+
+/**
+ * Kadukadu default options
+ * @type {KadukaduOptions}
+*/
 export const KADUKADU_DEFAULT_OPTIONS = {
   /**
    * Producer language
@@ -22,10 +28,28 @@ export const KADUKADU_DEFAULT_OPTIONS = {
    */
   showPopoverTranslations: true,
   /**
+   * Show HSK Levels
+   * @type {Boolean}
+   */
+  showHSK: true,
+  /**
    * Should render pinyin
    * @type {Boolean}
    */
-  pinyin: true
+  pinyin: true,
+  /**
+   * Should ignore words that are not found in the parser
+   * @type {Boolean}
+   */
+  ignoreNotFound: false,
+  /**
+   * Options for renderer
+   * @type {RendererOptions}
+   */
+  renderer: {
+    target: null,
+    lineSpacing: 5
+  }
 }
 
 /** Parsing hooks and events */
@@ -61,6 +85,11 @@ export const HOOKS = {
    */
   onParserDestroyed: []
 }
+
+/**
+ * Renderer default options
+ */
+export const RENDERER_DEFAULT_OPTIONS = {}
 
 // TODO: Use dictionary import paths
 export const DICTIONARY_IMPORT_MAPS = {

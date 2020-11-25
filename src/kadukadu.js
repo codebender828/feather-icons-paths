@@ -1,18 +1,17 @@
 import { reactive, ref } from '@vue/reactivity'
-import { merge } from 'lodash-es'
+import { isUndefined, merge } from 'lodash-es'
 
 import { KADUKADU_DEFAULT_OPTIONS } from './utils'
 import { bindToWindow } from './utils/dom'
-import { createSentenceParser } from './utils/zh/parser'
+import { createSentenceParser } from './utils/parser'
 
 let dictionary
 
 export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
-  const options = reactive(merge(KADUKADU_DEFAULT_OPTIONS, userOptions))
-  const parse = ref(undefined)
-  const parserOptions = reactive({
+  const mergedOptions = merge(KADUKADU_DEFAULT_OPTIONS, {
+    ...userOptions,
     /**
-     * The original and target languages for translation
+     * The original and target languages for translation. Only set after initializing as reactive variable
      * @type {String}
      * @example
      * ```
@@ -20,8 +19,18 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
      * 'zh-en' // -> Chinese - English
      * ```
      */
-    translationStrategy: `${options.sourceLanguage}-${options.targetLanguage}`
+    translationStrategy: undefined
   })
+
+  if (isUndefined(mergedOptions.sourceLanguage) || isUndefined(mergedOptions.targetLanguage)) {
+    throw new Error('[Kadukadu]: Cannot create Kadukadu translation strategy with missing "sourceLanguage" or "targetLanguage". Check your options to make sure you haven\'t provided an undefined value')
+  }
+
+  const options = reactive(mergedOptions)
+  const parse = ref(undefined)
+
+  /** Set translation strategy */
+  options.translationStrategy = `${options.sourceLanguage}-${options.targetLanguage}`
 
   /** Initialize Kadukadu */
   const init = () => new Promise((resolve, reject) => {
@@ -34,12 +43,11 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
         bindToWindow({
           $kadukadu: {
             options,
-            translationStrategy: parserOptions.translationStrategy,
             dictionary
           }
         })
 
-        const parse = createSentenceParser(parserOptions)
+        const parse = createSentenceParser(options)
         resolve(parse)
       })
       .catch(e => reject(e.message))
@@ -48,7 +56,6 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
   return {
     init,
     options,
-    parserOptions,
     parse
   }
 }
