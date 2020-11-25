@@ -10,7 +10,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "postinstall": "yarn unlink \"@akkadu/kadukadu\" && yarn link && yarn link \"@akkadu/kadukadu\"",
+    "postinstall": "yarn link && yarn link \"@akkadu/kadukadu\"",
     "build": "concurrently yarn:build:*",
     "dev": "concurrently yarn:dev:*",
     "dev:build": "cross-env swc src --out-dir dist/esm/ --watch",
