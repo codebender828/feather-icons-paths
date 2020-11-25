@@ -1,5 +1,6 @@
 import h from 'hyperscript'
 import { isArray } from 'lodash-es'
+import { css } from './css'
 
 /**
  * Creates render function for words returned from parser
@@ -37,18 +38,64 @@ export const createRenderer = (options) => {
   const render = (sentence, id) => {
     if (!isArray(sentence)) return
 
-    const rendered = h(`p.mb-${renderer.lineSpacing}`, {
-      attrs: {
-        'data-kadukadu-render-id': id
-      }
-    }, sentence.map(word => h('span', {
-      'data-word': JSON.stringify(word)
-    }, word.hanzi)))
+    const paragraph = `p.mb-${renderer.lineSpacing}`
 
-    target.appendChild(rendered)
+    if (options.pinyin) {
+      console.log(sentence)
 
-    return rendered
+      const nodes = sentence.map(word => h(`span.with-pinyin.${classes.withPinyinBlock}`, [
+        h(`span.${classes.pinyin}`, {
+          'data-pinyin': ''
+        }, [word.pinyin]),
+        h('span', {
+          'data-word': JSON.stringify(word),
+          'data-hsk': word.hsk
+        }, [word.hanzi])
+      ]))
+
+      const rendered = h(paragraph, {
+        attrs: {
+          'data-kadukadu-render-id': id
+        }
+      }, nodes)
+
+      target.appendChild(rendered)
+
+      return rendered
+    } else {
+      const rendered = h(paragraph, {
+        attrs: {
+          'data-kadukadu-render-id': id
+        }
+      }, sentence.map(word => h('span', {
+        'data-word': JSON.stringify(word),
+        'data-hsk': word.hsk
+      }, word.hanzi)))
+
+      target.appendChild(rendered)
+
+      return rendered
+    }
   }
 
+  // render.showPinyin = () => {
+  //   document.querySelectorAll('[data-pinyin]')
+  // }
+
   return render
+}
+
+const classes = {
+  withPinyinBlock: css`
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+  `,
+  pinyin: css`
+    display: block;
+    visibility: visible;
+    font-size: 11px;
+    color: var(--gray-500);
+    margin: 0 3px;
+  `
 }

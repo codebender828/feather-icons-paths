@@ -19,3 +19,10 @@ yarn playground
 ```bash
 yarn build
 ```
+
+
+- [ ] Parse sentence to {Array} word objects with meaning + pinyin
+  - [ ] If no pinyin is provided we pish an empty node
+- [ ] Render and append nodes to target
+- [ ] Handle pinyin
+- [ ] Handle Popover listeners

@@ -85,7 +85,6 @@ export const createGenerator = (defaultOptions = DEFAULTS) => {
   const defineSentenceLength = (length) => {
     dispatch('word-interval-length-changed', length)
     options.sentenceLength = length
-    console.log(length)
   }
 
   dispatch('generator-created', true)
@@ -93,6 +92,7 @@ export const createGenerator = (defaultOptions = DEFAULTS) => {
     stop,
     on,
     start,
+    initialized,
     defineSentenceLength
   }
 }
