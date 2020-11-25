@@ -133,5 +133,8 @@ button:disabled {
 
 .hide-pinyin [data-pinyin] {
   visibility: hidden;
+  height: 0;
+  overflow: hidden;
+  margin: 0;
 }
 </style>

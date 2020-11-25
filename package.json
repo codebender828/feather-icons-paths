@@ -19,7 +19,8 @@
     "build:cjs": "cross-env swc -C module.type=commonjs src --out-dir dist/cjs/",
     "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lint": "yarn lint:js",
-    "playground": "vite serve playground"
+    "playground": "vite serve playground",
+    "playground:deploy": "yarn build && yarn postinstall && vite build playground"
   },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
