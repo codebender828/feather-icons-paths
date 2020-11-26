@@ -1,7 +1,7 @@
 /** @typedef {{ id: Number, hanzi: String, pinyin: String, translations: String[], hsk: Number, }} KadukaduWord */
-/** @typedef {{ sourceLanguage: String, targetLanguage: String, plugins?: Function[], showHSK?: Boolean, pinyin?: Boolean, ignoreNotFound?: Boolean, renderer: RendererOptions }} KadukaduOptions */
+/** @typedef {{ sourceLanguage: String, targetLanguage: String, plugins?: Function[], showHSK?: Boolean, ignoreNotFound?: Boolean, renderer: RendererOptions }} KadukaduOptions */
 /** @typedef {{ tippy: { content: ({}) => String|HTMLElement, onShow: ({}) => void, onHide: ({}) => void } }} PopoverOptions */
-/** @typedef {{ target: String, lineSpacing: Number, showPopover: Boolean, popoverOptions: PopoverOptions }} RendererOptions */
+/** @typedef {{ target: String, lineSpacing: Number, showPopover: Boolean, pinyin: Boolean, popoverOptions: PopoverOptions }} RendererOptions */
 
 /**
  * Kadukadu default options
@@ -30,11 +30,6 @@ export const KADUKADU_DEFAULT_OPTIONS = {
    */
   showHSK: true,
   /**
-   * Should render pinyin
-   * @type {Boolean}
-   */
-  pinyin: true,
-  /**
    * Should ignore words that are not found in the parser
    * @type {Boolean}
    */
@@ -44,8 +39,23 @@ export const KADUKADU_DEFAULT_OPTIONS = {
    * @type {RendererOptions}
    */
   renderer: {
+    /**
+     * @type {Boolean}
+     */
+    pinyin: true,
+    /**
+     * @type {Boolean}
+     */
     showPopover: true,
+    /**
+     * id of the element to render nodes to
+     * @type {String}
+     */
     target: null,
+    /**
+     * Spacing between each paragraph
+     * @type {Number}
+     */
     lineSpacing: 5,
     /** @type {PopoverOptions} */
     popoverOptions: {}

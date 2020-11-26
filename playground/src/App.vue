@@ -86,9 +86,9 @@ export default defineComponent({
     onMounted(async () => {
       const { init } = createKadukadu({
         parserOptions: {},
-        pinyin: true,
         showHSK: true,
         renderer: {
+          pinyin: false,
           showPopover: true,
           target: 'target',
           popoverOptions: {
@@ -160,14 +160,28 @@ button:disabled {
   filter: grayscale(1);
 }
 
-.hide-pinyin [data-pinyin] {
-  visibility: hidden;
-  height: 0;
-  overflow: hidden;
-  margin: 0;
+.hide-pinyin {
+  [data-pinyin] {
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+    margin: 0;
+  }
 
   &[data-kadukadu-word] {
     transform: translateY(0) !important;
+  }
+
+  .kadukadu-character {
+    transition: all 0.1s ease-in;
+
+    &:hover {
+      background-color: var(--blue-400);
+      color: white;
+      padding: 2px 3px;
+      font-weight: bold;
+      border-radius: 4px;
+    }
   }
 }
 

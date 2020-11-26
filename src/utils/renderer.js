@@ -48,10 +48,12 @@ export const createRenderer = (options) => {
       const nodes = sentence.map(word => {
         const isWord = !!word.pinyin
         return h(`span.with-pinyin.${classes.withPinyinBlock}`, [
-          isWord && h(`span.${classes.pinyin}${isWord ? '.kadukadu-character' : ''}`, {
-            'data-pinyin': ''
-          }, [word.pinyin]),
-          h(`span.hsk${word.hsk}.${classes.char}${!isWord ? `.${classes.noPinyin}` : ''}`, {
+          isWord
+            ? h(`span.${classes.pinyin}`, {
+                'data-pinyin': ''
+              }, [word.pinyin])
+            : null,
+          h(`span.hsk${word.hsk}.${classes.char}${!isWord ? `.${classes.noPinyin}` : ''}${isWord ? '.kadukadu-character' : ''}`, {
             'data-word': JSON.stringify(word),
             'data-hsk': word.hsk,
             ...isWord && { 'data-kk-word': '' }
