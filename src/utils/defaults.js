@@ -1,5 +1,7 @@
-/** @typedef {{sourceLanguage: String, targetLanguage: String, plugins?: Function[], showPopoverTranslations?: Boolean, showHSK?: Boolean, pinyin?: Boolean, ignoreNotFound?: Boolean, renderer: RendererOptions }} KadukaduOptions */
-/** @typedef {target: String, lineSpacing: Number }} RendererOptions */
+/** @typedef {{ id: Number, hanzi: String, pinyin: String, translations: String[], hsk: Number, }} KadukaduWord */
+/** @typedef {{ sourceLanguage: String, targetLanguage: String, plugins?: Function[], showHSK?: Boolean, pinyin?: Boolean, ignoreNotFound?: Boolean, renderer: RendererOptions }} KadukaduOptions */
+/** @typedef {{ tippy: { content: ({}) => String|HTMLElement, onShow: ({}) => void, onHide: ({}) => void } }} PopoverOptions */
+/** @typedef {{ target: String, lineSpacing: Number, showPopover: Boolean, popoverOptions: PopoverOptions }} RendererOptions */
 
 /**
  * Kadukadu default options
@@ -23,11 +25,6 @@ export const KADUKADU_DEFAULT_OPTIONS = {
    * */
   plugins: [],
   /**
-   * Show popover translations
-   * @type {Boolean}
-   */
-  showPopoverTranslations: true,
-  /**
    * Show HSK Levels
    * @type {Boolean}
    */
@@ -47,8 +44,11 @@ export const KADUKADU_DEFAULT_OPTIONS = {
    * @type {RendererOptions}
    */
   renderer: {
+    showPopover: true,
     target: null,
-    lineSpacing: 5
+    lineSpacing: 5,
+    /** @type {PopoverOptions} */
+    popoverOptions: {}
   }
 }
 

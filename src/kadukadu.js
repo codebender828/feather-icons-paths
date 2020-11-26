@@ -32,7 +32,10 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
   /** Set translation strategy */
   options.translationStrategy = `${options.sourceLanguage}-${options.targetLanguage}`
 
-  /** Initialize Kadukadu */
+  /**
+   * Initialize Kadukadu instance
+   * @returns {Promise<(value: String) => HTMLParagraphElement>}
+   * */
   const init = () => new Promise((resolve, reject) => {
     import('@akkadu/kadukadu-dictionary')
       .then(({ default: _dictionary }) => {

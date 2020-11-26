@@ -52,7 +52,7 @@ export const createSentenceParser = (parserOptions) => {
 
   let renderId = 1
 
-  const render = createRenderer(options)
+  const render = createRenderer(options.renderer)
   /** Parser function */
   const parse = (sentence) => {
     ++renderId

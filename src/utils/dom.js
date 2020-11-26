@@ -13,7 +13,14 @@ export const bindToWindow = (object) => {
 }
 
 /** Query elements by selector */
-export const query = document.querySelector
+export const query = (...args) => {
+  if (args.length > 1) {
+    const [domain, selector] = args
+    return domain.querySelector(selector)
+  } else {
+    return document.querySelector(args[0])
+  }
+}
 
 /** Gets element by id */
 export const getEl = canUseDom && document.getElementById

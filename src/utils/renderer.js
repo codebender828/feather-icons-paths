@@ -1,26 +1,25 @@
 import h from 'hyperscript'
 import { isArray } from 'lodash-es'
 import { css } from './css'
+import { createPopoverInstance } from './popover'
 
 /**
  * Creates render function for words returned from parser
- * @param {RendererOptions} options
+ * @param {import('./defaults').RendererOptions} options
  * @returns {() => HTMLParagraphElement} renderer function
  */
 export const createRenderer = (options) => {
-  const { renderer } = options
-
-  if (!('target' in renderer)) {
+  if (!('target' in options)) {
     console.error('[Kadukadu]: Render target element expected in createKadukadu options')
     throw new Error('[Kadukadu]: Render target element expected in createKadukadu options')
   }
 
   let target
   try {
-    target = document.getElementById(renderer.target)
+    target = document.getElementById(options.target)
     console.info('[Kadukadu]: Render target found. Rendering to:', target)
   } catch (error) {
-    console.error(`[Kadukadu]: Unable to locate renderer target of id "${renderer.target}"`)
+    console.error(`[Kadukadu]: Unable to locate renderer target of id "${options.target}"`)
   }
 
   if (!target) {
@@ -30,6 +29,11 @@ export const createRenderer = (options) => {
 
   window.$kadukadu.options.renderer.target = target
 
+  // Handle creation of popover instance
+  if (options.showPopover) {
+    createPopoverInstance(options)
+  }
+
   /**
    * Render function
    * @param {import('./parser').KadukaduWord[]} sentence
@@ -38,20 +42,22 @@ export const createRenderer = (options) => {
   const render = (sentence, id) => {
     if (!isArray(sentence)) return
 
-    const paragraph = `p.mb-${renderer.lineSpacing}`
+    const paragraph = `p.mb-${options.lineSpacing}`
 
     if (options.pinyin) {
-      console.log(sentence)
-
-      const nodes = sentence.map(word => h(`span.with-pinyin.${classes.withPinyinBlock}`, [
-        h(`span.${classes.pinyin}`, {
-          'data-pinyin': ''
-        }, [word.pinyin]),
-        h('span', {
-          'data-word': JSON.stringify(word),
-          'data-hsk': word.hsk
-        }, [word.hanzi])
-      ]))
+      const nodes = sentence.map(word => {
+        const isWord = !!word.pinyin
+        return h(`span.with-pinyin.${classes.withPinyinBlock}`, [
+          isWord && h(`span.${classes.pinyin}${isWord ? '.kadukadu-character' : ''}`, {
+            'data-pinyin': ''
+          }, [word.pinyin]),
+          h(`span.hsk${word.hsk}.${classes.char}${!isWord ? `.${classes.noPinyin}` : ''}`, {
+            'data-word': JSON.stringify(word),
+            'data-hsk': word.hsk,
+            ...isWord && { 'data-kk-word': '' }
+          }, [word.hanzi])
+        ])
+      })
 
       const rendered = h(paragraph, {
         attrs: {
@@ -67,20 +73,21 @@ export const createRenderer = (options) => {
         attrs: {
           'data-kadukadu-render-id': id
         }
-      }, sentence.map(word => h('span', {
-        'data-word': JSON.stringify(word),
-        'data-hsk': word.hsk
-      }, word.hanzi)))
+      }, sentence.map(word => {
+        const isWord = !!word.pinyin
+
+        return h(`span.hsk${word.hsk}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
+          'data-word': JSON.stringify(word),
+          'data-hsk': word.hsk,
+          ...word.pinyin && { 'data-kk-word': '' }
+        }, word.hanzi)
+      }))
 
       target.appendChild(rendered)
 
       return rendered
     }
   }
-
-  // render.showPinyin = () => {
-  //   document.querySelectorAll('[data-pinyin]')
-  // }
 
   return render
 }
@@ -91,11 +98,18 @@ const classes = {
     flex-direction: column;
     align-items: center;
   `,
+  char: css`
+    cursor: pointer;
+  `,
   pinyin: css`
     display: block;
     visibility: visible;
     font-size: 11px;
     color: var(--gray-500);
     margin: 0 3px;
+  `,
+  noPinyin: css`
+    display: inline-block;
+    transform: translateY(50%);
   `
 }

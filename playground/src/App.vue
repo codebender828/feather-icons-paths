@@ -71,6 +71,7 @@
 <script>
 import { defineComponent, inject, onMounted, ref } from 'vue'
 import { createKadukadu } from '@akkadu/kadukadu'
+import h from 'hyperscript'
 
 export default defineComponent({
   name: 'App',
@@ -78,7 +79,7 @@ export default defineComponent({
     const target = ref(null)
     const showPinyin = ref(true)
 
-    const { start, stop } = inject('$generator')
+    const { start, on, stop } = inject('$generator')
     const initialized = ref(false)
     let parse
 
@@ -87,12 +88,40 @@ export default defineComponent({
         parserOptions: {},
         pinyin: true,
         showHSK: true,
-        showPopoverTranslations: true,
         renderer: {
-          target: 'target'
+          showPopover: true,
+          target: 'target',
+          popoverOptions: {
+            tippy: {
+              onShow: (instance) => {
+                const found = instance.reference.getAttribute('data-word')
+                const details = JSON.parse(found)
+                const { popper } = instance
+
+                const button = h('div.flex.justify-end', [
+                  h('button.action-button.px-2.py-1.bg-blue-400.text-white.font-bold.rounded-md.focus:shadow-outline', {
+                    onclick: (e) => {
+                      console.log('Popover button clicked!', details)
+                    }
+                  }, 'Action')
+                ])
+
+                const box = popper.querySelector('.tooltip-box')
+                box.appendChild(button)
+              },
+              onHide (instance) {
+                const { popper } = instance
+                const button = popper.querySelector('.action-button')
+                button.remove()
+              }
+            }
+          }
         }
       })
 
+      /**
+       * After initialization we append elements to DOM by caling the poarse function returned.
+       */
       parse = await init()
       parse('之前有很多人问学好前端需要学习哪些 js 库, 主流框架应该学 vue 还是 react ? 针对这些问题, 笔者来说说自己的看法和学习总结.')
 
@@ -102,11 +131,11 @@ export default defineComponent({
         count++
         if (count === 5) clearInterval(interval)
       }, 2000)
-    })
 
-    // on('sentence-generated', ({ sentence }) => {
-    //   parse(sentence)
-    // })
+      on('sentence-generated', ({ sentence }) => {
+        parse(sentence)
+      })
+    })
 
     return {
       target,
@@ -125,7 +154,7 @@ export default defineComponent({
 })
 </script>
 
-<style scss>
+<style lang="scss">
 button:disabled {
   cursor: not-allowed;
   filter: grayscale(1);
@@ -136,5 +165,21 @@ button:disabled {
   height: 0;
   overflow: hidden;
   margin: 0;
+
+  &[data-kadukadu-word] {
+    transform: translateY(0) !important;
+  }
+}
+
+.kadukadu-character {
+  transition: all 0.1s ease-in;
+
+  &:hover {
+    background-color: var(--blue-400);
+    color: white;
+    padding: 2px 3px;
+    font-weight: bold;
+    border-radius: 4px;
+  }
 }
 </style>
