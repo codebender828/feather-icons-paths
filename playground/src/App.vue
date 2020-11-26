@@ -88,7 +88,7 @@ export default defineComponent({
         parserOptions: {},
         showHSK: true,
         renderer: {
-          pinyin: false,
+          pinyin: true,
           showPopover: true,
           target: 'target',
           popoverOptions: {
