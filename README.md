@@ -21,8 +21,8 @@ yarn build
 ```
 
 
-- [ ] Parse sentence to {Array} word objects with meaning + pinyin
-  - [ ] If no pinyin is provided we pish an empty node
-- [ ] Render and append nodes to target
-- [ ] Handle pinyin
-- [ ] Handle Popover listeners
+- [x] Parse sentence to {Array} word objects with meaning + pinyin
+  - [x] If no pinyin is provided we pish an empty node
+- [x] Render and append nodes to target
+- [x] Handle pinyin
+- [x] Handle Popover listeners
