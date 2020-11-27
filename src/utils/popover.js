@@ -1,6 +1,6 @@
 import h from 'hyperscript'
 import { css } from './css'
-import { delegate } from 'tippy.js'
+import { delegate, roundArrow } from 'tippy.js'
 import { query } from './dom'
 
 /**
@@ -93,14 +93,15 @@ export const createPopoverInstance = (options) => {
   const { el: tooltip, styles } = createTooltip()
 
   return delegate(`#${target}`, {
+    target: '.data-kk-word',
     interactive: true,
     interactiveBorder: -10,
     appendTo: () => document.body,
+    animation: false,
     trigger: 'click mouseenter',
     maxWidth: 350,
     allowHTML: true,
-    arrow: true,
-    delay: [0, 0],
+    arrow: roundArrow,
     content (reference) {
       const wordAttr = reference.getAttribute('data-word')
       if (wordAttr) {
@@ -126,7 +127,6 @@ export const createPopoverInstance = (options) => {
       return tooltip.innerHTML
     },
     // Spread user's options
-    ...popoverOptions.tippy || {},
-    target: '[data-kk-word]'
+    ...popoverOptions.tippy || {}
   })
 }

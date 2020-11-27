@@ -113,7 +113,8 @@ export default defineComponent({
                 const { popper } = instance
                 const button = popper.querySelector('.action-button')
                 button.remove()
-              }
+              },
+              delay: [0, 0]
             }
           }
         }

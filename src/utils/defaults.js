@@ -1,6 +1,6 @@
 /** @typedef {{ id: Number, hanzi: String, pinyin: String, translations: String[], hsk: Number, }} KadukaduWord */
 /** @typedef {{ sourceLanguage: String, targetLanguage: String, plugins?: Function[], showHSK?: Boolean, ignoreNotFound?: Boolean, renderer: RendererOptions }} KadukaduOptions */
-/** @typedef {{ tippy: { content: ({}) => String|HTMLElement, onShow: ({}) => void, onHide: ({}) => void } }} PopoverOptions */
+/** @typedef {{ tippy: { content: ({}) => String|HTMLElement, onShow: ({}) => void, onHide: ({}) => void, animation: Boolean } }} PopoverOptions */
 /** @typedef {{ target: String, lineSpacing: Number, showPopover: Boolean, pinyin: Boolean, popoverOptions: PopoverOptions }} RendererOptions */
 
 /**
@@ -58,7 +58,17 @@ export const KADUKADU_DEFAULT_OPTIONS = {
      */
     lineSpacing: 5,
     /** @type {PopoverOptions} */
-    popoverOptions: {}
+    popoverOptions: {
+      tippy: {
+        /**
+       * Dangerously set the animation. Setting the animation value to true
+       * will cause a delay when showing and hiding the popovers. This results in
+       * overlapping onf the word popovers.
+       * @type {Boolean}
+       */
+        animation: false
+      }
+    }
   }
 }
 

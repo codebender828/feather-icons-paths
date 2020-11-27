@@ -53,7 +53,7 @@ export const createRenderer = (options) => {
                 'data-pinyin': ''
               }, [word.pinyin])
             : null,
-          h(`span.hsk${word.hsk}.${classes.char}${!isWord ? `.${classes.noPinyin}` : ''}${isWord ? '.kadukadu-character' : ''}`, {
+          h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${!isWord ? `.${classes.noPinyin}` : ''}${isWord ? '.kadukadu-character' : ''}`, {
             'data-word': JSON.stringify(word),
             'data-hsk': word.hsk,
             ...isWord && { 'data-kk-word': '' }
@@ -69,7 +69,7 @@ export const createRenderer = (options) => {
 
       target.appendChild(rendered)
 
-      return rendered
+      return [rendered, sentence]
     } else {
       const rendered = h(paragraph, {
         attrs: {
@@ -78,7 +78,7 @@ export const createRenderer = (options) => {
       }, sentence.map(word => {
         const isWord = !!word.pinyin
 
-        return h(`span.hsk${word.hsk}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
+        return h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
           'data-word': JSON.stringify(word),
           'data-hsk': word.hsk,
           ...word.pinyin && { 'data-kk-word': '' }
@@ -87,7 +87,7 @@ export const createRenderer = (options) => {
 
       target.appendChild(rendered)
 
-      return rendered
+      return [rendered, sentence]
     }
   }
 
