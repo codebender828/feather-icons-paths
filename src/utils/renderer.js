@@ -34,6 +34,17 @@ export const createRenderer = (options) => {
     createPopoverInstance(options)
   }
 
+  // If user provides custom render function, they can completely
+  // override kadukadu's rendering scheme
+  if (options.render && (typeof options.render === 'function')) {
+    const render = (sentence, id) => {
+      const rendered = options.render(h, sentence, id)
+      target.appendChild(rendered)
+      return [rendered, sentence]
+    }
+    return render
+  }
+
   /**
    * Render function
    * @param {import('./parser').KadukaduWord[]} sentence
@@ -56,7 +67,8 @@ export const createRenderer = (options) => {
           h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${!isWord ? `.${classes.noPinyin}` : ''}${isWord ? '.kadukadu-character' : ''}`, {
             'data-word': JSON.stringify(word),
             'data-hsk': word.hsk,
-            ...isWord && { 'data-kk-word': '' }
+            ...isWord && { 'data-kk-word': '' },
+            ...options.events || {}
           }, [word.hanzi])
         ])
       })
@@ -81,7 +93,8 @@ export const createRenderer = (options) => {
         return h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
           'data-word': JSON.stringify(word),
           'data-hsk': word.hsk,
-          ...word.pinyin && { 'data-kk-word': '' }
+          ...word.pinyin && { 'data-kk-word': '' },
+          ...options.events || {}
         }, word.hanzi)
       }))
 

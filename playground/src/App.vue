@@ -111,6 +111,11 @@ export default defineComponent({
           pinyin: true,
           showPopover: true,
           target: 'target',
+          events: {
+            onclick: (e) => {
+              console.log('Clicked word', e)
+            }
+          },
           popoverOptions: {
             tippy: {
               onShow: (instance) => {
