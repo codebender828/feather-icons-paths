@@ -1,7 +1,16 @@
 import h from 'hyperscript'
 import { isArray } from 'lodash-es'
 import { css } from './css'
+import { useId } from './generators'
+import initializeObserver from './observer'
 import { createPopoverInstance } from './popover'
+
+const punctuationMarks = ['.', '。', '.', ',', '!', '-', '_', '&', '*', ';', ':', '?', '+', '{', '}', '[', ']', '|', '《', '》', '：', '"', '；', '`', '<', '>']
+const isPunctuationMark = char => punctuationMarks.includes(char)
+
+const alphanumeric = /^[0-9a-zA-Z]+$/
+const isAlphanumeric = char => char && char.match(alphanumeric)
+const escapePopover = (punc) => h('span.kadukadu-punctuation', punc)
 
 /**
  * Creates render function for words returned from parser
@@ -28,10 +37,23 @@ export const createRenderer = (options) => {
   }
 
   window.$kadukadu.options.renderer.target = target
+  const translationStrategy = window.$kadukadu.options.translationStrategy
 
   // Handle creation of popover instance
   if (options.showPopover) {
     createPopoverInstance(options)
+    initializeObserver(target)
+  }
+
+  // If user provides custom render function, they can completely
+  // override kadukadu's rendering scheme
+  if (options.render && (typeof options.render === 'function')) {
+    const render = (sentence, id) => {
+      const rendered = options.render(h, sentence, id)
+      target.appendChild(rendered)
+      return [rendered, sentence]
+    }
+    return render
   }
 
   /**
@@ -46,6 +68,12 @@ export const createRenderer = (options) => {
 
     if (options.pinyin) {
       const nodes = sentence.map(word => {
+        if (
+          isPunctuationMark(word.hanzi) ||
+          (translationStrategy.startsWith('zh') && isAlphanumeric(word.hanzi))
+        ) {
+          return escapePopover(word.hanzi)
+        }
         const isWord = !!word.pinyin
         return h(`span.with-pinyin.${classes.withPinyinBlock}`, [
           isWord
@@ -56,8 +84,10 @@ export const createRenderer = (options) => {
           h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${!isWord ? `.${classes.noPinyin}` : ''}${isWord ? '.kadukadu-character' : ''}`, {
             'data-word': JSON.stringify(word),
             'data-hsk': word.hsk,
-            ...isWord && { 'data-kk-word': '' }
-          }, [word.hanzi])
+            'data-node-id': useId(),
+            ...isWord && { 'data-kk-word': '' },
+            ...options.events || {}
+          }, [word.hanzi || word.text])
         ])
       })
 
@@ -76,13 +106,22 @@ export const createRenderer = (options) => {
           'data-kadukadu-render-id': id
         }
       }, sentence.map(word => {
+        if (
+          isPunctuationMark(word.hanzi) ||
+          (translationStrategy.startsWith('zh') && isAlphanumeric(word.hanzi))
+        ) {
+          return escapePopover(word.hanzi)
+        }
+
         const isWord = !!word.pinyin
 
         return h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
           'data-word': JSON.stringify(word),
           'data-hsk': word.hsk,
-          ...word.pinyin && { 'data-kk-word': '' }
-        }, word.hanzi)
+          'data-node-id': useId(),
+          ...word.pinyin && { 'data-kk-word': '' },
+          ...options.events || {}
+        }, word.hanzi || word.text)
       }))
 
       target.appendChild(rendered)

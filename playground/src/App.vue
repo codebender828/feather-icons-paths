@@ -80,7 +80,7 @@
       :ref="target"
       :class="{ 'hide-pinyin': !showPinyin }"
       style="overflow-y: scroll"
-      class="rounded-lg bg-black-alpha-800 mt-5 p-5 h-64"
+      class="rounded-lg bg-black-alpha-800 relative mt-5 p-5 h-64"
     />
   </div>
 </template>
@@ -111,6 +111,11 @@ export default defineComponent({
           pinyin: true,
           showPopover: true,
           target: 'target',
+          events: {
+            onclick: (e) => {
+              console.log('Clicked word', e)
+            }
+          },
           popoverOptions: {
             tippy: {
               onShow: (instance) => {
@@ -147,7 +152,9 @@ export default defineComponent({
       render('之前有很多人问学好前端需要学习哪些 js 库, 主流框架应该学 vue 还是 react ? 针对这些问题, 笔者来说说自己的看法和学习总结.')
 
       let count = 0
+      const target = document.getElementById('target')
       const interval = setInterval(() => {
+        target.lastChild.remove()
         render('之前有很多人问学好前端需要学习哪些 js 库, 主流框架应该学 vue 还是 react ? 针对这些问题, 笔者来说说自己的看法和学习总结.')
         count++
         if (count === 5) clearInterval(interval)

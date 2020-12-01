@@ -1,7 +1,7 @@
 /** @typedef {{ id: Number, hanzi: String, pinyin: String, translations: String[], hsk: Number, }} KadukaduWord */
 /** @typedef {{ sourceLanguage: String, targetLanguage: String, plugins?: Function[], showHSK?: Boolean, ignoreNotFound?: Boolean, renderer: RendererOptions, onProgress: (value: Number, total: Number) => null }} KadukaduOptions */
 /** @typedef {{ tippy: { content: ({}) => String|HTMLElement, onShow: ({}) => void, onHide: ({}) => void, animation: Boolean } }} PopoverOptions */
-/** @typedef {{ target: String, lineSpacing: Number, showPopover: Boolean, pinyin: Boolean, popoverOptions: PopoverOptions }} RendererOptions */
+/** @typedef {{ target: String, lineSpacing: Number, showPopover: Boolean, pinyin: Boolean, events: Object, render: (h: (string, {}) => HTMLElement, sentence: KadukaduWord[], id: Number) => [rendered: HTMLElement, sentence: KadukaduWord[]], popoverOptions: PopoverOptions }} RendererOptions */
 
 /**
  * Kadukadu default options
@@ -52,6 +52,13 @@ export const KADUKADU_DEFAULT_OPTIONS = {
      * @type {String}
      */
     target: null,
+
+    /**
+     * @param {(string, {}) => HTMLElement} h Hyperscript function for creating DOM nodes
+     * @param {KadukaduWord[]} sentence Sentence of words returned by Kadukadu parser
+     * @param {Number} id Id of the sentence rendered
+     */
+    render: undefined,
     /**
      * Spacing between each paragraph
      * @type {Number}
