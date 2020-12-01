@@ -108,7 +108,7 @@ export const createPopoverInstance = (options) => {
         const word = JSON.parse(wordAttr)
 
         // Word
-        query(tooltip, '#word').textContent = word.hanzi
+        query(tooltip, '#word').textContent = word.hanzi || word.text
 
         // Pinyin
         query(tooltip, '#pinyin').textContent = word.pinyin

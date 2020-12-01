@@ -3,6 +3,13 @@ import { isArray } from 'lodash-es'
 import { css } from './css'
 import { createPopoverInstance } from './popover'
 
+const punctuationMarks = ['.', '。', '.', ',', '!', '-', '_', '&', '*', ';', ':', '?', '+', '{', '}', '[', ']', '|', '《', '》', '：', '"', '；', '`', '<', '>']
+const isPunctuationMark = char => punctuationMarks.includes(char)
+
+const alphanumeric = /^[0-9a-zA-Z]+$/
+const isAlphanumeric = char => char && char.match(alphanumeric)
+const escapePopover = (punc) => h('span.kadukadu-punctuation', punc)
+
 /**
  * Creates render function for words returned from parser
  * @param {import('./defaults').RendererOptions} options
@@ -28,6 +35,7 @@ export const createRenderer = (options) => {
   }
 
   window.$kadukadu.options.renderer.target = target
+  const translationStrategy = window.$kadukadu.options.translationStrategy
 
   // Handle creation of popover instance
   if (options.showPopover) {
@@ -57,6 +65,12 @@ export const createRenderer = (options) => {
 
     if (options.pinyin) {
       const nodes = sentence.map(word => {
+        if (
+          isPunctuationMark(word.hanzi) ||
+          (translationStrategy.startsWith('zh') && isAlphanumeric(word.hanzi))
+        ) {
+          return escapePopover(word.hanzi)
+        }
         const isWord = !!word.pinyin
         return h(`span.with-pinyin.${classes.withPinyinBlock}`, [
           isWord
@@ -69,7 +83,7 @@ export const createRenderer = (options) => {
             'data-hsk': word.hsk,
             ...isWord && { 'data-kk-word': '' },
             ...options.events || {}
-          }, [word.hanzi])
+          }, [word.hanzi || word.text])
         ])
       })
 
@@ -88,6 +102,13 @@ export const createRenderer = (options) => {
           'data-kadukadu-render-id': id
         }
       }, sentence.map(word => {
+        if (
+          isPunctuationMark(word.hanzi) ||
+          (translationStrategy.startsWith('zh') && isAlphanumeric(word.hanzi))
+        ) {
+          return escapePopover(word.hanzi)
+        }
+
         const isWord = !!word.pinyin
 
         return h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
@@ -95,7 +116,7 @@ export const createRenderer = (options) => {
           'data-hsk': word.hsk,
           ...word.pinyin && { 'data-kk-word': '' },
           ...options.events || {}
-        }, word.hanzi)
+        }, word.hanzi || word.text)
       }))
 
       target.appendChild(rendered)

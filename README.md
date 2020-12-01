@@ -85,6 +85,30 @@ For the full API see [defaults.js](https://github.com/Akkadu/kadukadu/blob/main/
   }
 }
 ```
+### Overriding the rendering scheme
+If you need an escape hatch for rendering each word in a sentence, you can over-ride the rendering scheme of Kadukadu depending on how you wish to manage the rendering of each word in Kadukadu. Using the `options.renderer.render` function. This function parameter and return types are as follows: The frst argument `h` is `hyperscript`'s `document.createElement`. You can also ignore it and instead call `document.createElement` for yourself.
+
+`(h: (string, {}) => HTMLElement, sentence: KadukaduWord[], id: Number) => [rendered: HTMLElement, sentence: KadukaduWord[]]`.
+```js
+import { createKadukadu } from '@akkadu/kadukadu'
+
+const { init } = createKadukadu({
+  // ...
+  renderer: {
+    target: 'target', // id of element to print text
+    render(h, sentence, i) {
+      return h('p', {
+        'data-custom-sentence-id': id
+        // Here we map each word in the sentence and place inside a span
+      }, sentence.map(word => h('span', {
+        'data-word': JSON.stringify(word),
+        'data-kk-word': ''
+      }, word.hanzi)))
+    }
+  }
+})
+```
+> ⚠️ Warning: Using the `render` option, will completely override the default popover settings for the rendered sentence and make them unavailable. To re-enable popovers, you need to configure the `options.renderer.popoverOptions.tippy` property yourself. See the `tippy` options from `tippy.js` here: https://atomiks.github.io/tippyjs/v6/all-props/
 
 ## Development
 Project setup
