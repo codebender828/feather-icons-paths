@@ -5,10 +5,15 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
+  "typings": "dist/types/index.d.ts",
   "repository": "https://github.com/Akkadu/kadukadu",
   "author": "codebender828 <jonas@akkadu-team.com>",
   "license": "MIT",
   "private": false,
+  "files": [
+    "dist/",
+    "src/"
+  ],
   "scripts": {
     "postinstall": "yarn link && yarn link \"@akkadu/kadukadu\"",
     "build": "concurrently yarn:build:*",
