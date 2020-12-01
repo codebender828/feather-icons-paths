@@ -40,7 +40,7 @@ const PARSER_DEFAULT_OPTIONS = {
 /**
  * Creates sentence -> parsed word parse function
  * @param {ParserOptions} options
- * @returns {Function} parser function
+ * @returns {(string: String) => HTMLParagraphElement} parser function
  */
 export const createSentenceParser = (parserOptions) => {
   if (!('$kadukadu' in window)) {

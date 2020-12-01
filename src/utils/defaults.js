@@ -1,5 +1,5 @@
 /** @typedef {{ id: Number, hanzi: String, pinyin: String, translations: String[], hsk: Number, }} KadukaduWord */
-/** @typedef {{ sourceLanguage: String, targetLanguage: String, plugins?: Function[], showHSK?: Boolean, ignoreNotFound?: Boolean, renderer: RendererOptions }} KadukaduOptions */
+/** @typedef {{ sourceLanguage: String, targetLanguage: String, plugins?: Function[], showHSK?: Boolean, ignoreNotFound?: Boolean, renderer: RendererOptions, onProgress: (value: Number, total: Number) => null }} KadukaduOptions */
 /** @typedef {{ tippy: { content: ({}) => String|HTMLElement, onShow: ({}) => void, onHide: ({}) => void, animation: Boolean } }} PopoverOptions */
 /** @typedef {{ target: String, lineSpacing: Number, showPopover: Boolean, pinyin: Boolean, popoverOptions: PopoverOptions }} RendererOptions */
 
