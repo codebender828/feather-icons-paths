@@ -1,6 +1,6 @@
 {
   "name": "@akkadu/kadukadu",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Akkadu's popover dictionary for language learning",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -36,7 +36,6 @@
     "@babel/preset-env": "^7.12.7",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
-    "@vue/reactivity": "^3.0.2",
     "concurrently": "^5.3.0",
     "cross-env": "^7.0.2",
     "defu": "^3.2.2",
@@ -65,6 +64,7 @@
     }
   },
   "dependencies": {
+    "@vue/reactivity": "^3.0.2",
     "can-use-dom": "^0.1.0",
     "hyperscript": "^2.0.2",
     "lodash-es": "^4.17.15",
