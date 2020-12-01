@@ -104,6 +104,7 @@ export const createPopoverInstance = (options) => {
     arrow: roundArrow,
     content (reference) {
       const wordAttr = reference.getAttribute('data-word')
+      const nodeId = reference.getAttribute('data-node-id')
       if (wordAttr) {
         const word = JSON.parse(wordAttr)
 
@@ -112,6 +113,8 @@ export const createPopoverInstance = (options) => {
 
         // Pinyin
         query(tooltip, '#pinyin').textContent = word.pinyin
+
+        query(tooltip, '.tooltip-box').setAttribute('tooltip-node-id', nodeId)
 
         // HSK Level badge
         const hsk = query(tooltip, '#hsk')

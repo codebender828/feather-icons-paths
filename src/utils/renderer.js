@@ -1,6 +1,8 @@
 import h from 'hyperscript'
 import { isArray } from 'lodash-es'
 import { css } from './css'
+import { useId } from './generators'
+import initializeObserver from './observer'
 import { createPopoverInstance } from './popover'
 
 const punctuationMarks = ['.', '。', '.', ',', '!', '-', '_', '&', '*', ';', ':', '?', '+', '{', '}', '[', ']', '|', '《', '》', '：', '"', '；', '`', '<', '>']
@@ -40,6 +42,7 @@ export const createRenderer = (options) => {
   // Handle creation of popover instance
   if (options.showPopover) {
     createPopoverInstance(options)
+    initializeObserver(target)
   }
 
   // If user provides custom render function, they can completely
@@ -81,6 +84,7 @@ export const createRenderer = (options) => {
           h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${!isWord ? `.${classes.noPinyin}` : ''}${isWord ? '.kadukadu-character' : ''}`, {
             'data-word': JSON.stringify(word),
             'data-hsk': word.hsk,
+            'data-node-id': useId(),
             ...isWord && { 'data-kk-word': '' },
             ...options.events || {}
           }, [word.hanzi || word.text])
@@ -114,6 +118,7 @@ export const createRenderer = (options) => {
         return h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
           'data-word': JSON.stringify(word),
           'data-hsk': word.hsk,
+          'data-node-id': useId(),
           ...word.pinyin && { 'data-kk-word': '' },
           ...options.events || {}
         }, word.hanzi || word.text)
