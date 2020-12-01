@@ -59,6 +59,23 @@
     </div>
 
     <div
+      v-if="progress !== 100"
+      class="flex justify-center items-center flex-col px-4 py-3 rounded-lg shadow-lg bg-blue-50 text-blue-500 font-bold"
+    >
+      <p class="mb-1 font-regular">
+        Loading dictionary - {{ progress }}%
+      </p>
+
+      <div class="rounded-full overflow-hidden h-1 bg-blue-100 w-64">
+        <div
+          :style="{ width: `${progress}%` }"
+          class="bg-blue-500 h-full"
+        />
+      </div>
+    </div>
+
+    <div
+      v-else
       id="target"
       :ref="target"
       :class="{ 'hide-pinyin': !showPinyin }"
@@ -81,11 +98,14 @@ export default defineComponent({
 
     const { start, on, stop } = inject('$generator')
     const initialized = ref(false)
-    let parse
+    const progress = ref(0)
 
     onMounted(async () => {
       const { init } = createKadukadu({
         parserOptions: {},
+        onProgress: (value, total) => {
+          progress.value = parseInt((value / total) * 100, 0)
+        },
         showHSK: true,
         renderer: {
           pinyin: true,
@@ -121,20 +141,20 @@ export default defineComponent({
       })
 
       /**
-       * After initialization we append elements to DOM by caling the poarse function returned.
+       * After initialization we append elements to DOM by caling the render function returned.
        */
-      parse = await init()
-      parse('之前有很多人问学好前端需要学习哪些 js 库, 主流框架应该学 vue 还是 react ? 针对这些问题, 笔者来说说自己的看法和学习总结.')
+      const render = await init()
+      render('之前有很多人问学好前端需要学习哪些 js 库, 主流框架应该学 vue 还是 react ? 针对这些问题, 笔者来说说自己的看法和学习总结.')
 
       let count = 0
       const interval = setInterval(() => {
-        parse('之前有很多人问学好前端需要学习哪些 js 库, 主流框架应该学 vue 还是 react ? 针对这些问题, 笔者来说说自己的看法和学习总结.')
+        render('之前有很多人问学好前端需要学习哪些 js 库, 主流框架应该学 vue 还是 react ? 针对这些问题, 笔者来说说自己的看法和学习总结.')
         count++
         if (count === 5) clearInterval(interval)
       }, 2000)
 
       on('sentence-generated', ({ sentence }) => {
-        parse(sentence)
+        render(sentence)
       })
     })
 
@@ -149,7 +169,8 @@ export default defineComponent({
         initialized.value = false
       },
       initialized,
-      showPinyin
+      showPinyin,
+      progress
     }
   }
 })

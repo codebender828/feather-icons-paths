@@ -1,12 +1,18 @@
-import { reactive, ref } from '@vue/reactivity'
+import { reactive } from '@vue/reactivity'
 import { isUndefined, merge } from 'lodash-es'
 
 import { KADUKADU_DEFAULT_OPTIONS } from './utils'
 import { bindToWindow } from './utils/dom'
 import { createSentenceParser } from './utils/parser'
+import { areYouinChina } from './utils/geolocation'
+import { loadDictionary } from './utils/loaders'
 
 let dictionary
 
+/**
+ * Creates a new Kadukadu instance
+ * @param {import('./utils/defaults').KadukaduOptions} userOptions
+ */
 export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
   const mergedOptions = merge(KADUKADU_DEFAULT_OPTIONS, {
     ...userOptions,
@@ -27,7 +33,6 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
   }
 
   const options = reactive(mergedOptions)
-  const parse = ref(undefined)
 
   /** Set translation strategy */
   options.translationStrategy = `${options.sourceLanguage}-${options.targetLanguage}`
@@ -36,29 +41,38 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
    * Initialize Kadukadu instance
    * @returns {Promise<(value: String) => HTMLParagraphElement>}
    * */
-  const init = () => new Promise((resolve, reject) => {
-    import('@akkadu/kadukadu-dictionary')
-      .then(({ default: _dictionary }) => {
-        // eslint-disable-next-line
-        dictionary = _dictionary
+  const init = async () => {
+    try {
+      const isInChina = await areYouinChina()
+      console.log({ isInChina })
 
-        /** After initialization, we then bind options to global scope */
-        bindToWindow({
-          $kadukadu: {
-            options,
-            dictionary
-          }
-        })
+      const strategy = options.translationStrategy
+      const dictionaryUrl = isInChina
+        ? `https://assets.akkadu.cn/kadukadu/${strategy}.json`
+        : `https://assets.akkadu.com/kadukadu/${strategy}.json`
 
-        const parse = createSentenceParser(options)
-        resolve(parse)
+      // TODO: remove
+      console.log({ dictionaryUrl })
+
+      dictionary = await loadDictionary(null, options.onProgress)
+
+      /** After initialization, we then bind options to global scope */
+      bindToWindow({
+        $kadukadu: {
+          options,
+          dictionary
+        }
       })
-      .catch(e => reject(e.message))
-  })
+
+      const render = createSentenceParser(options)
+      return render
+    } catch (error) {
+      throw new Error('[Kadukadu]: ' + error.message)
+    }
+  }
 
   return {
     init,
-    options,
-    parse
+    options
   }
 }
