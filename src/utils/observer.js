@@ -12,19 +12,24 @@ export default function initializeObserver (_target) {
 
   const config = { attributes: true, childList: true, subtree: true }
 
-  const handler = (mutationsList, observer) => {
+  const handler = (mutationsList) => {
     for (const mutation of mutationsList) {
+      // Only observe removed nodes
       if (mutation.type === 'childList' && mutation.removedNodes) {
         const removedParagraphs = [...mutation.removedNodes]
+
+        // Get removed node ids from spans from removed paragraphs
         removedParagraphs.forEach(paragraph => {
           const nodeIds = [...paragraph.querySelectorAll('[data-node-id].kadukadu-character')]
             .map(node => node.getAttribute('data-node-id'))
             .filter(attr => attr)
 
+          // Get corresponding tooltip instance
           for (let i = 0; i < nodeIds.length; i++) {
             const tooltip = document.querySelector(`[tooltip-node-id=${nodeIds[i]}]`)
 
             // LOOOOL
+            // Get actual tippy.js instance node
             if (
               tooltip &&
               tooltip.parentElement &&
@@ -34,14 +39,12 @@ export default function initializeObserver (_target) {
             ) {
               const popper = tooltip.parentElement.parentElement.parentElement
               if (popper.hasAttribute('data-tippy-root')) {
-                console.log({ popper })
+                // We can now finally fix it. :)
                 popper.style.position = 'fixed'
               }
             }
           }
         })
-      } else if (mutation.type === 'attributes') {
-        console.log('The ' + mutation.attributeName + ' attribute was modified.')
       }
     }
   }
