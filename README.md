@@ -15,7 +15,7 @@ const { init } = createKadukadu({
   targetLanguage: 'en',
   renderer: {
     target: 'target', // id of element to print text
-    pinyin: true, // determines whether to render pinyin nodes
+    transliteration: true, // determines whether to render transliteration (pinyin) nodes
   }
 })
 
@@ -63,9 +63,10 @@ For the full API see [defaults.js](https://github.com/Akkadu/kadukadu/blob/main/
    */
   renderer: {
     /**
+     * Standard name for pinyin
      * @type {Boolean}
      */
-    pinyin: true,
+    transliteration: true,
     /**
      * @type {Boolean}
      */
@@ -103,7 +104,7 @@ const { init } = createKadukadu({
       }, sentence.map(word => h('span', {
         'data-word': JSON.stringify(word),
         'data-kk-word': ''
-      }, word.hanzi)))
+      }, word.text)))
     }
   }
 })
@@ -130,8 +131,8 @@ yarn build
 ```
 
 
-- [x] Parse sentence to {Array} word objects with meaning + pinyin
-  - [x] If no pinyin is provided we pish an empty node
+- [x] Parse sentence to {Array} word objects with meaning + transliteration
+  - [x] If no transliteration is provided we pish an empty node
 - [x] Render and append nodes to target
-- [x] Handle pinyin
+- [x] Handle transliteration
 - [x] Handle Popover listeners

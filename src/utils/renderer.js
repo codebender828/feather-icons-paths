@@ -5,11 +5,11 @@ import { useId } from './generators'
 import initializeObserver from './observer'
 import { createPopoverInstance } from './popover'
 
-const punctuationMarks = ['.', '。', '.', ',', '!', '-', '_', '&', '*', ';', ':', '?', '+', '{', '}', '[', ']', '|', '《', '》', '：', '"', '；', '`', '<', '>']
-const isPunctuationMark = char => punctuationMarks.includes(char)
+export const punctuationMarks = ['.', '。', '.', ',', '!', '-', '_', '&', '*', ';', ':', '?', '+', '{', '}', '[', ']', '|', '《', '》', '：', '"', '；', '`', '<', '>']
+export const isPunctuationMark = char => punctuationMarks.includes(char)
 
 const alphanumeric = /^[0-9a-zA-Z]+$/
-const isAlphanumeric = char => char && char.match(alphanumeric)
+export const isAlphanumeric = char => char && char.match(alphanumeric)
 const escapePopover = (punc) => h('span.kadukadu-punctuation', punc)
 
 /**
@@ -64,30 +64,30 @@ export const createRenderer = (options) => {
   const render = (sentence, id) => {
     if (!isArray(sentence)) return
 
-    const paragraph = `p.mb-${options.lineSpacing}`
+    const paragraph = `p.mb-${options.lineSpacing}.${options.transliteration ? classes.transliterationSentence : ''}`
 
-    if (options.pinyin) {
+    if (options.transliteration) {
       const nodes = sentence.map(word => {
         if (
-          isPunctuationMark(word.hanzi) ||
-          (translationStrategy.startsWith('zh') && isAlphanumeric(word.hanzi))
+          isPunctuationMark(word.text) ||
+          (translationStrategy.startsWith('zh') && isAlphanumeric(word.text))
         ) {
-          return escapePopover(word.hanzi)
+          return escapePopover(word.text)
         }
-        const isWord = !!word.pinyin
-        return h(`span.with-pinyin.${classes.withPinyinBlock}`, [
+        const isWord = !!word.transliteration
+        return h(`span${word.id ? '.data-kk-word' : ''}${word.hsk ? `.hsk${word.hsk}` : ''}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
+          'data-word': JSON.stringify(word),
+          'data-hsk': word.hsk,
+          'data-node-id': useId(),
+          ...isWord && { 'data-kk-word': '' },
+          ...options.events || {}
+        }, [
+          word.text,
           isWord
-            ? h(`span.${classes.pinyin}`, {
-                'data-pinyin': ''
-              }, [word.pinyin])
-            : null,
-          h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${!isWord ? `.${classes.noPinyin}` : ''}${isWord ? '.kadukadu-character' : ''}`, {
-            'data-word': JSON.stringify(word),
-            'data-hsk': word.hsk,
-            'data-node-id': useId(),
-            ...isWord && { 'data-kk-word': '' },
-            ...options.events || {}
-          }, [word.hanzi || word.text])
+            ? h(`span.${classes.transliteration}`, {
+                'data-transliteration': ''
+              }, [word.transliteration])
+            : null
         ])
       })
 
@@ -107,21 +107,21 @@ export const createRenderer = (options) => {
         }
       }, sentence.map(word => {
         if (
-          isPunctuationMark(word.hanzi) ||
-          (translationStrategy.startsWith('zh') && isAlphanumeric(word.hanzi))
+          isPunctuationMark(word.text) ||
+          (translationStrategy.startsWith('zh') && isAlphanumeric(word.text))
         ) {
-          return escapePopover(word.hanzi)
+          return escapePopover(word.text)
         }
 
-        const isWord = !!word.pinyin
+        const isWord = !!word.transliteration
 
         return h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
           'data-word': JSON.stringify(word),
           'data-hsk': word.hsk,
           'data-node-id': useId(),
-          ...word.pinyin && { 'data-kk-word': '' },
+          ...word.transliteration && { 'data-kk-word': '' },
           ...options.events || {}
-        }, word.hanzi || word.text)
+        }, word.text || word.text)
       }))
 
       target.appendChild(rendered)
@@ -139,18 +139,23 @@ const classes = {
     flex-direction: column;
     align-items: center;
   `,
+  transliterationSentence: css`
+    line-height: 2.4;
+  `,
   char: css`
     cursor: pointer;
+    position: relative;
+    margin: 0 5px;
   `,
-  pinyin: css`
+  transliteration: css`
     display: block;
+    position: absolute;
+    bottom: 90%;
+    left: 50%;
+    transform: translateX(-50%);
     visibility: visible;
-    font-size: 11px;
+    font-size: 9.5px;
     color: var(--gray-500);
-    margin: 0 3px;
-  `,
-  noPinyin: css`
-    display: inline-block;
-    transform: translateY(50%);
+    white-space: nowrap;
   `
 }

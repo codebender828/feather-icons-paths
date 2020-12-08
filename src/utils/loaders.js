@@ -7,8 +7,7 @@
 export const loadDictionary = async (url, onProgress = () => null, done = () => null) => {
   try {
     if (!('TextDecoder' in window)) return
-    const _url = 'https://akkadu-assets.s3.amazonaws.com/kadukadu/zh-en.json'
-    const response = await fetch(_url || url)
+    const response = await fetch(url)
     const reader = response.body.getReader()
     const contentLength = +response.headers.get('Content-Length')
 

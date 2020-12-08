@@ -3,7 +3,7 @@
  */
 
 /**
- * @typedef {{ id: Number, hanzi: String, pinyin: String, translations: String[], hsk: Number, }} KadukaduWord
+ * @typedef {{ id: Number, text: String, transliteration: String, translations: String[], hsk: Number, }} KadukaduWord
  */
 
 /**
@@ -13,7 +13,7 @@
   */
 
 import { merge } from 'lodash-es'
-import { createRenderer } from './renderer'
+import { createRenderer, isPunctuationMark, isAlphanumeric } from './renderer'
 
 /**
  * Sentence parser default options
@@ -77,15 +77,25 @@ export const createSentenceParser = (parserOptions) => {
           break
         } else {
           if (!options.ignoreNotFound) {
-            if (testWord.length === 1) {
+            if (testWord.length === 1 && (isPunctuationMark(testWord) || isAlphanumeric(testWord))) {
+              let nonChinese = testWord
+              let next = ''
+              let sentenceIndex = i
+              while (true) {
+                next = sentence[++sentenceIndex] || '' // Could be the end of a sentence
+                nonChinese += next
+                if (isPunctuationMark(next) || !isAlphanumeric(next)) {
+                  break
+                }
+              }
               parsed.push({
-                hanzi: testWord,
-                pinyin: undefined,
+                text: nonChinese,
+                transliteration: undefined,
                 hsk: undefined,
                 id: undefined,
                 translations: []
               })
-              i += testWord.length - 1
+              i += nonChinese.length - 1
               break
             }
           }

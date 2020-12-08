@@ -48,13 +48,13 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
 
       const strategy = options.translationStrategy
       const dictionaryUrl = isInChina
-        ? `https://assets.akkadu.cn/kadukadu/${strategy}.json`
-        : `https://assets.akkadu.com/kadukadu/${strategy}.json`
+        ? `https://assets.akkadu.cn/kadukadu/_${strategy}.json`
+        : `https://assets.akkadu.com/kadukadu/_${strategy}.json`
 
       // TODO: remove
       console.log({ dictionaryUrl })
 
-      dictionary = await loadDictionary(null, options.onProgress)
+      dictionary = await loadDictionary(dictionaryUrl, options.onProgress)
 
       /** After initialization, we then bind options to global scope */
       bindToWindow({

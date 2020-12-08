@@ -17,8 +17,8 @@ const createTooltip = () => {
       background-color: var(--gray-800);
       color: var(--white);
     `,
-    word: css`font-size:2.25rem;`,
-    pinyin: css`
+    text: css`font-size:2.25rem;`,
+    transliteration: css`
       font-size: 1.125rem;
       font-weight: 400;
       margin-left: 8px;
@@ -74,8 +74,8 @@ const createTooltip = () => {
       role: 'tooltip'
     }, [
       h(`div.tooltip-box.${styles.box}`, [
-        h(`span#word.${styles.word}`, ''),
-        h(`span#pinyin.${styles.pinyin}`, ''),
+        h(`span#text.${styles.text}`, ''),
+        h(`span#transliteration.${styles.transliteration}`, ''),
         h('span#hsk', ''),
         h(`div#translations.${styles.translations}`, '')
       ])
@@ -91,6 +91,7 @@ const createTooltip = () => {
 export const createPopoverInstance = (options) => {
   const { target, popoverOptions } = options
   const { el: tooltip, styles } = createTooltip()
+  window.$kadukadu.tooltipEl = tooltip
 
   return delegate(`#${target}`, {
     target: '.data-kk-word',
@@ -109,16 +110,16 @@ export const createPopoverInstance = (options) => {
         const word = JSON.parse(wordAttr)
 
         // Word
-        query(tooltip, '#word').textContent = word.hanzi || word.text
+        query(tooltip, '#text').textContent = word.text
 
         // Pinyin
-        query(tooltip, '#pinyin').textContent = word.pinyin
+        query(tooltip, '#transliteration').textContent = word.transliteration
 
         query(tooltip, '.tooltip-box').setAttribute('tooltip-node-id', nodeId)
 
         // HSK Level badge
         const hsk = query(tooltip, '#hsk')
-        hsk.textContent = 'HSK level: ' + word.hsk
+        hsk.textContent = word.badge
         hsk.className = `${styles.hskBadge[word.hsk]} ${styles.hsk}`
 
         // Translations

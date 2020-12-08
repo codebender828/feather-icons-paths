@@ -30,13 +30,13 @@
       </button>
     </div>
 
-    <label for="show-pinyin">
+    <label for="show-transliteration">
       <input
-        id="show-pinyin"
+        id="show-transliteration"
         v-model="showPinyin"
         type="checkbox"
       >
-      Show pinyin
+      Show transliteration
     </label>
 
     <div
@@ -78,7 +78,7 @@
       v-else
       id="target"
       :ref="target"
-      :class="{ 'hide-pinyin': !showPinyin }"
+      :class="{ 'hide-transliteration': !showPinyin }"
       style="overflow-y: scroll"
       class="rounded-lg bg-black-alpha-800 relative mt-5 p-5 h-64"
     />
@@ -108,7 +108,7 @@ export default defineComponent({
         },
         showHSK: true,
         renderer: {
-          pinyin: true,
+          transliteration: true,
           showPopover: true,
           target: 'target',
           events: {
@@ -119,25 +119,23 @@ export default defineComponent({
           popoverOptions: {
             tippy: {
               onShow: (instance) => {
+                const tooltip = window.$kadukadu.tooltipEl.cloneNode(true)
+                const tooltipBox = tooltip.querySelector('.tooltip-box')
                 const found = instance.reference.getAttribute('data-word')
                 const details = JSON.parse(found)
-                const { popper } = instance
 
-                const button = h('div.flex.justify-end', [
-                  h('button.action-button.px-2.py-1.bg-blue-400.text-white.font-bold.rounded-md.focus:shadow-outline', {
-                    onclick: (e) => {
-                      console.log('Popover button clicked!', details)
-                    }
-                  }, 'Action')
-                ])
-
-                const box = popper.querySelector('.tooltip-box')
-                box.appendChild(button)
-              },
-              onHide (instance) {
-                const { popper } = instance
-                const button = popper.querySelector('.action-button')
-                button.remove()
+                if (instance && found) {
+                  tooltipBox.appendChild(
+                    h('div.flex', [
+                      h('button.px-2.py-1.inline-flex.bg-blue-400.text-white.rounded-md.add-to-flashcards-button.focus:shadow-outline.font-bold.ml-auto', {
+                        onclick: (e) => {
+                          console.log('Popover button clicked!', details)
+                        }
+                      }, 'Add to flashcards')
+                    ])
+                  )
+                  instance.setContent(tooltip)
+                }
               },
               delay: [0, 0]
             }
@@ -189,8 +187,8 @@ button:disabled {
   filter: grayscale(1);
 }
 
-.hide-pinyin {
-  [data-pinyin] {
+.hide-transliteration {
+  [data-transliteration] {
     visibility: hidden;
     height: 0;
     overflow: hidden;
