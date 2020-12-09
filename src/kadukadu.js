@@ -55,7 +55,7 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
       console.log({ dictionaryUrl })
       console.log({ options })
 
-      if (options.translationStrategy.startsWith('en')) {
+      if (options.translationStrategy.startsWith('zh')) {
         dictionary = await loadDictionary(dictionaryUrl, options.onProgress)
       } else {
         dictionary = {}
