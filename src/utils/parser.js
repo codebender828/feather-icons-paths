@@ -55,6 +55,7 @@ export const createSentenceParser = (parserOptions) => {
   const render = createRenderer(options.renderer)
   /** Parser function */
   const parse = (sentence) => {
+    console.log(sentence)
     ++renderId
     const parsed = []
     let word

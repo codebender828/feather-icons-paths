@@ -62,6 +62,8 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
         dictionary = {}
       }
 
+      console.log(dictionary)
+
       /** After initialization, we then bind options to global scope */
       bindToWindow({
         $kadukadu: {
@@ -71,7 +73,8 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
       })
 
       /** ************* TRANSLATOR CODE - FOR NOW, ONLY VIABLE FOR EN->ZH *********************** */
-      if (!options.sourceLanguage !== 'zh') {
+      if (options.sourceLanguage !== 'zh') {
+        console.log('options.sourceLanguage', options.sourceLanguage)
         window.$kadukadu.translator = createTranslator(options, TRANSLATION_SERVICE.KEY)
       }
       /** ***************************************************** */
