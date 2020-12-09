@@ -53,16 +53,14 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
         : `https://assets.akkadu.com/kadukadu/_${strategy}.json`
 
       // TODO: remove
-      console.log({ dictionaryUrl })
-      console.log({ options })
+      console.log('Kadukadu Options', options)
 
       if (options.translationStrategy.startsWith('zh')) {
+        console.log({ dictionaryUrl })
         dictionary = await loadDictionary(dictionaryUrl, options.onProgress)
       } else {
         dictionary = {}
       }
-
-      console.log(dictionary)
 
       /** After initialization, we then bind options to global scope */
       bindToWindow({
@@ -73,8 +71,7 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
       })
 
       /** ************* TRANSLATOR CODE - FOR NOW, ONLY VIABLE FOR EN->ZH *********************** */
-      if (options.sourceLanguage !== 'zh') {
-        console.log('options.sourceLanguage', options.sourceLanguage)
+      if (options.sourceLanguage === 'en') {
         window.$kadukadu.translator = createTranslator(options, TRANSLATION_SERVICE.KEY)
       }
       /** ***************************************************** */
