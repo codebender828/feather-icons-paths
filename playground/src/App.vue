@@ -90,6 +90,15 @@ import { defineComponent, inject, onMounted, ref } from 'vue'
 import { createKadukadu } from '@akkadu/kadukadu'
 import h from 'hyperscript'
 
+const query = (...args) => {
+  if (args.length > 1) {
+    const [domain, selector] = args
+    return domain.querySelector(selector)
+  } else {
+    return document.querySelector(args[0])
+  }
+}
+
 export default defineComponent({
   name: 'App',
   setup () {
@@ -117,27 +126,88 @@ export default defineComponent({
             }
           },
           popoverOptions: {
-            tippy: {
-              onShow: (instance) => {
-                const tooltip = window.$kadukadu.tooltipEl.cloneNode(true)
-                const tooltipBox = tooltip.querySelector('.tooltip-box')
-                const found = instance.reference.getAttribute('data-word')
-                const details = JSON.parse(found)
+            tippy (styles) {
+              return {
+                onShow: (instance) => {
+                  const tooltip = window.$kadukadu.tooltipEl.cloneNode(true)
+                  const tooltipBox = tooltip.querySelector('.tooltip-box')
+                  const wordAttr = instance.reference.getAttribute('data-word')
+                  const nodeId = instance.reference.getAttribute('data-node-id')
 
-                if (instance && found) {
-                  tooltipBox.appendChild(
-                    h('div.flex', [
-                      h('button.px-2.py-1.inline-flex.bg-blue-400.text-white.rounded-md.add-to-flashcards-button.focus:shadow-outline.font-bold.ml-auto', {
-                        onclick: (e) => {
-                          console.log('Popover button clicked!', details)
-                        }
-                      }, 'Add to flashcards')
-                    ])
-                  )
-                  instance.setContent(tooltip)
-                }
-              },
-              delay: [0, 0]
+                  if (wordAttr) {
+                    const word = JSON.parse(wordAttr)
+
+                    // Word has multiple pinyin/meanings
+                    if (Array.isArray(word)) {
+                    // Word
+                      query(tooltip, '#text').textContent = word[0].text
+
+                      // Pinyin | Transliterations
+                      const transliterations = word.map(w => w.transliteration).join(', ')
+                      query(tooltip, '#transliteration').textContent = transliterations
+
+                      // HSK Level badge
+                      const hsk = query(tooltip, '#hsk')
+                      hsk.textContent = word[0].badge
+                      hsk.className = `${styles.hskBadge[word[0].hsk]} ${styles.hsk}`
+
+                      // Translations
+                      const translations = query(tooltip, '#translations')
+                      translations.innerHTML = word.map(w => {
+                        return `
+                        <div class="${styles.translationsGroup}">
+                          <p class="${styles.translationsHeader}">${w.text} (${w.transliteration})</p>
+                          ${w.translations.map(translation => `<p class="${styles.translationGroupText}">• ${translation}</p>`).join('')}
+                        </div>
+                      `
+                      }).join('')
+                      tooltipBox.appendChild(
+                        h('div.flex', [
+                          h('button.px-2.py-1.inline-flex.bg-blue-400.text-white.rounded-md.add-to-flashcards-button.focus:shadow-outline.font-bold.ml-auto', {
+                            onclick: (e) => {
+                              console.log('Popover button clicked!', word)
+                            }
+                          }, 'Add to flashcards')
+                        ])
+                      )
+                      instance.setContent(tooltip)
+                      return
+                    }
+
+                    // Word
+                    query(tooltip, '#text').textContent = word.text
+
+                    // Pinyin | Transliterations
+                    query(tooltip, '#transliteration').textContent = word.transliteration
+
+                    query(tooltip, '.tooltip-box').setAttribute('tooltip-node-id', nodeId)
+
+                    // HSK Level badge
+                    const hsk = query(tooltip, '#hsk')
+                    hsk.textContent = word.badge
+                    hsk.className = `${styles.hskBadge[word.hsk]} ${styles.hsk}`
+
+                    // Translations
+                    const translations = query(tooltip, '#translations')
+                    translations.innerHTML = word.translations.map((item) => {
+                      return `<p>${item}</p>`
+                    }).join('')
+
+                    tooltipBox.appendChild(
+                      h('div.flex', [
+                        h('button.px-2.py-1.inline-flex.bg-blue-400.text-white.rounded-md.add-to-flashcards-button.focus:shadow-outline.font-bold.ml-auto', {
+                          onclick: (e) => {
+                            console.log('Popover button clicked!', word)
+                          }
+                        }, 'Add to flashcards')
+                      ])
+                    )
+
+                    instance.setContent(tooltip)
+                  }
+                },
+                delay: [0, 0]
+              }
             }
           }
         }
@@ -147,13 +217,12 @@ export default defineComponent({
        * After initialization we append elements to DOM by caling the render function returned.
        */
       const render = await init()
-      render('之前有很多人问学好前端需要学习哪些 js 库, 主流框架应该学 vue 还是 react ? 针对这些问题, 笔者来说说自己的看法和学习总结.')
+      render('那假如说有一天就是没有我吃饭的一个情况，那我们会怎么做呢?')
 
       let count = 0
-      const target = document.getElementById('target')
       const interval = setInterval(() => {
-        target.lastChild.remove()
-        render('之前有很多人问学好前端需要学习哪些 js 库, 主流框架应该学 vue 还是 react ? 针对这些问题, 笔者来说说自己的看法和学习总结.')
+        // target.lastChild.remove()
+        render('那假如说有一天就是没有我吃饭的一个情况，那我们会怎么做呢?')
         count++
         if (count === 5) clearInterval(interval)
       }, 2000)

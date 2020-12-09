@@ -68,25 +68,26 @@ export const createRenderer = (options) => {
 
     if (options.transliteration) {
       const nodes = sentence.map(word => {
+        const _word = Array.isArray(word) ? word[0] : word
         if (
-          isPunctuationMark(word.text) ||
-          (translationStrategy.startsWith('zh') && isAlphanumeric(word.text))
+          isPunctuationMark(_word.text) ||
+          (translationStrategy.startsWith('zh') && isAlphanumeric(_word.text))
         ) {
-          return escapePopover(word.text)
+          return escapePopover(_word.text)
         }
-        const isWord = !!word.transliteration
-        return h(`span${word.id ? '.data-kk-word' : ''}${word.hsk ? `.hsk${word.hsk}` : ''}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
+        const isWord = !!_word.transliteration
+        return h(`span${_word.id ? '.data-kk-word' : ''}${_word.hsk ? `.hsk${_word.hsk}` : ''}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
           'data-word': JSON.stringify(word),
-          'data-hsk': word.hsk,
+          'data-hsk': _word.hsk,
           'data-node-id': useId(),
           ...isWord && { 'data-kk-word': '' },
           ...options.events || {}
         }, [
-          word.text,
+          _word.text,
           isWord
             ? h(`span.${classes.transliteration}`, {
                 'data-transliteration': ''
-              }, [word.transliteration])
+              }, [_word.transliteration])
             : null
         ])
       })
@@ -106,22 +107,23 @@ export const createRenderer = (options) => {
           'data-kadukadu-render-id': id
         }
       }, sentence.map(word => {
+        const _word = Array.isArray(word) ? word[0] : word
         if (
-          isPunctuationMark(word.text) ||
-          (translationStrategy.startsWith('zh') && isAlphanumeric(word.text))
+          isPunctuationMark(_word.text) ||
+          (translationStrategy.startsWith('zh') && isAlphanumeric(_word.text))
         ) {
-          return escapePopover(word.text)
+          return escapePopover(_word.text)
         }
 
-        const isWord = !!word.transliteration
+        const isWord = !!_word.transliteration
 
-        return h(`span.data-kk-word.hsk${word.hsk}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
+        return h(`span.data-kk-word.hsk${_word.hsk}.${classes.char}${isWord ? '.kadukadu-character' : ''}`, {
           'data-word': JSON.stringify(word),
-          'data-hsk': word.hsk,
+          'data-hsk': _word.hsk,
           'data-node-id': useId(),
-          ...word.transliteration && { 'data-kk-word': '' },
+          ..._word.transliteration && { 'data-kk-word': '' },
           ...options.events || {}
-        }, word.text || word.text)
+        }, _word.text)
       }))
 
       target.appendChild(rendered)

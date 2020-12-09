@@ -33,7 +33,7 @@ const createTooltip = () => {
       border-radius: 9999px;
     `,
     translations: css`
-      font-size: 1rem;
+      font-size: 0.8em;
       font-weight: 400;
       margin-top: 16px;
     `,
@@ -66,7 +66,17 @@ const createTooltip = () => {
         background-color: var(--red-50);
         color: var(--red-400);
       `
-    }
+    },
+    translationsGroup: css`
+      margin-bottom: 8px;
+      font-size: 1em;
+    `,
+    translationsHeader: css`
+      font-weight: 700;
+      font-size: 1.1rem;
+      font-style: italic;
+      text-decoration: underline
+    `
   }
 
   return {
@@ -103,34 +113,13 @@ export const createPopoverInstance = (options) => {
     maxWidth: 350,
     allowHTML: true,
     arrow: roundArrow,
-    content (reference) {
-      const wordAttr = reference.getAttribute('data-word')
-      const nodeId = reference.getAttribute('data-node-id')
-      if (wordAttr) {
-        const word = JSON.parse(wordAttr)
-
-        // Word
-        query(tooltip, '#text').textContent = word.text
-
-        // Pinyin
-        query(tooltip, '#transliteration').textContent = word.transliteration
-
-        query(tooltip, '.tooltip-box').setAttribute('tooltip-node-id', nodeId)
-
-        // HSK Level badge
-        const hsk = query(tooltip, '#hsk')
-        hsk.textContent = word.badge
-        hsk.className = `${styles.hskBadge[word.hsk]} ${styles.hsk}`
-
-        // Translations
-        const translations = query(tooltip, '#translations')
-        translations.innerHTML = word.translations.map((item) => {
-          return `<p>${item}</p>`
-        }).join('')
-      }
+    content (_reference) {
+      const tooltip = window.$kadukadu.tooltipEl.cloneNode(true)
+      const loadingText = h('p.text-center.absolute.top-4.left-4', 'Loading...')
+      query(tooltip, '.tooltip-box').appendChild(loadingText)
       return tooltip.innerHTML
     },
     // Spread user's options
-    ...popoverOptions.tippy || {}
+    ...popoverOptions?.tippy?.(styles) || {}
   })
 }

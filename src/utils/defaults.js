@@ -1,6 +1,6 @@
 /** @typedef {{ id: Number, text: String, transliteration: String, translations: String[], hsk: Number, }} KadukaduWord */
 /** @typedef {{ sourceLanguage: String, targetLanguage: String, plugins?: Function[], showHSK?: Boolean, ignoreNotFound?: Boolean, renderer: RendererOptions, onProgress: (value: Number, total: Number) => null }} KadukaduOptions */
-/** @typedef {{ tippy: { content: ({}) => String|HTMLElement, onShow: ({}) => void, onHide: ({}) => void, animation: Boolean } }} PopoverOptions */
+/** @typedef {{ tippy: () => import('tippy.js').Delegate }} PopoverOptions */
 /** @typedef {{ target: String, lineSpacing: Number, showPopover: Boolean, transliteration: Boolean, events: Object, render: (h: (string, {}) => HTMLElement, sentence: KadukaduWord[], id: Number) => [rendered: HTMLElement, sentence: KadukaduWord[]], popoverOptions: PopoverOptions }} RendererOptions */
 
 /**
@@ -66,7 +66,11 @@ export const KADUKADU_DEFAULT_OPTIONS = {
     lineSpacing: 5,
     /** @type {PopoverOptions} */
     popoverOptions: {
-      tippy: {
+      /**
+       * Tippy options for Kadukadu
+       * @type {({}) => import('tippy.js').DefaultProps}
+       */
+      tippy: (styles) => ({
         /**
        * Dangerously set the animation. Setting the animation value to true
        * will cause a delay when showing and hiding the popovers. This results in
@@ -74,7 +78,7 @@ export const KADUKADU_DEFAULT_OPTIONS = {
        * @type {Boolean}
        */
         animation: false
-      }
+      })
     }
   }
 }
