@@ -1,11 +1,12 @@
 import { reactive } from '@vue/reactivity'
 import { isUndefined, merge } from 'lodash-es'
 
-import { KADUKADU_DEFAULT_OPTIONS } from './utils'
+import { KADUKADU_DEFAULT_OPTIONS, TRANSLATION_SERVICE } from './utils'
 import { bindToWindow } from './utils/dom'
 import { createSentenceParser } from './utils/parser'
 import { areYouinChina } from './utils/geolocation'
 import { loadDictionary } from './utils/loaders'
+import { createTranslator } from './utils/translations'
 
 let dictionary
 
@@ -68,6 +69,12 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
           dictionary
         }
       })
+
+      /** ************* TRANSLATOR CODE - FOR NOW, ONLY VIABLE FOR EN->ZH *********************** */
+      if (!options.sourceLanguage !== 'zh') {
+        window.$kadukadu.translator = createTranslator(options, TRANSLATION_SERVICE.KEY)
+      }
+      /** ***************************************************** */
 
       const render = createSentenceParser(options)
       return render
