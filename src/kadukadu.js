@@ -54,7 +54,11 @@ export function createKadukadu (userOptions = KADUKADU_DEFAULT_OPTIONS) {
       // TODO: remove
       console.log({ dictionaryUrl })
 
-      dictionary = await loadDictionary(dictionaryUrl, options.onProgress)
+      if (options.translationStrategy.startsWith('en')) {
+        dictionary = await loadDictionary(dictionaryUrl, options.onProgress)
+      } else {
+        dictionary = {}
+      }
 
       /** After initialization, we then bind options to global scope */
       bindToWindow({
