@@ -1,6 +1,6 @@
 {
   "name": "@akkadu/kadukadu",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Akkadu's popover dictionary for language learning",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",

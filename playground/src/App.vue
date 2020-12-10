@@ -58,7 +58,7 @@
       Renderer initialized
     </div>
 
-    <div
+    <!-- <div
       v-if="progress !== 100"
       class="flex justify-center items-center flex-col px-4 py-3 rounded-lg shadow-lg bg-blue-50 text-blue-500 font-bold"
     >
@@ -72,10 +72,9 @@
           class="bg-blue-500 h-full"
         />
       </div>
-    </div>
+    </div> -->
 
     <div
-      v-else
       id="target"
       :ref="target"
       :class="{ 'hide-transliteration': !showPinyin }"
@@ -111,106 +110,107 @@ export default defineComponent({
 
     onMounted(async () => {
       const { init } = createKadukadu({
-        sourceLanguage: 'zh',
-        targetLanguage: 'en',
-        parserOptions: {},
+        sourceLanguage: 'en',
+        targetLanguage: 'zh',
         onProgress: (value, total) => {
           progress.value = parseInt((value / total) * 100, 0)
         },
-        showHSK: true,
         renderer: {
           transliteration: true,
           showPopover: true,
           target: 'target',
-          events: {
-            onclick: (e) => {
-              console.log('Clicked word', e)
-            }
+          render: (h, sentence, id) => {
+            const paragraph = h('p.mb-5', [
+              sentence.map(word => h('span.mr-1.kadukadu-character.focus:shadow-outline.rounded-md', {
+                'data-word': word,
+                attrs: {
+                  tabindex: 0
+                },
+                onclick: async (e) => {
+                  const translate = window.$kadukadu.translator
+                  console.log('Clicked word!', await translate(word))
+                }
+              }, word))
+            ])
+            return paragraph
           },
           popoverOptions: {
-            tippy (styles) {
+            tippy () {
               return {
+                target: '.kadukadu-character',
+                content (reference) {
+                  const tooltip = window.$kadukadu.tooltipEl.cloneNode(true)
+                  const loadingText = h('p.text-center.absolute.top-4.left-4', 'Loading...')
+                  query(tooltip, '.tooltip-box').appendChild(loadingText)
+                  return tooltip.innerHTML
+                },
                 onShow: (instance) => {
                   const tooltip = window.$kadukadu.tooltipEl.cloneNode(true)
                   const tooltipBox = tooltip.querySelector('.tooltip-box')
-                  const wordAttr = instance.reference.getAttribute('data-word')
-                  const nodeId = instance.reference.getAttribute('data-node-id')
-
-                  if (wordAttr) {
-                    const word = JSON.parse(wordAttr)
-
-                    // Word has multiple pinyin/meanings
-                    if (Array.isArray(word)) {
-                    // Word
-                      query(tooltip, '#text').textContent = word[0].text
-
-                      // Pinyin | Transliterations
-                      const transliterations = word.map(w => w.transliteration).join(', ')
-                      query(tooltip, '#transliteration').textContent = transliterations
-
-                      // HSK Level badge
-                      const hsk = query(tooltip, '#hsk')
-                      hsk.textContent = word[0].badge
-                      hsk.className = `${styles.hskBadge[word[0].hsk]} ${styles.hsk}`
-
-                      // Translations
-                      const translations = query(tooltip, '#translations')
-                      translations.innerHTML = word.map(w => {
-                        return `
-                        <div class="${styles.translationsGroup}">
-                          <p class="${styles.translationsHeader}">${w.text} (${w.transliteration})</p>
-                          ${w.translations.map(translation => `<p class="${styles.translationGroupText}">• ${translation}</p>`).join('')}
-                        </div>
-                      `
-                      }).join('')
-                      tooltipBox.appendChild(
-                        h('div.flex', [
-                          h('button.px-2.py-1.inline-flex.bg-blue-400.text-white.rounded-md.add-to-flashcards-button.focus:shadow-outline.font-bold.ml-auto', {
-                            onclick: (e) => {
-                              console.log('Popover button clicked!', word)
-                            }
-                          }, 'Add to flashcards')
-                        ])
-                      )
-                      instance.setContent(tooltip)
-                      return
-                    }
-
-                    // Word
-                    query(tooltip, '#text').textContent = word.text
-
-                    // Pinyin | Transliterations
-                    query(tooltip, '#transliteration').textContent = word.transliteration
-
-                    query(tooltip, '.tooltip-box').setAttribute('tooltip-node-id', nodeId)
-
-                    // HSK Level badge
-                    const hsk = query(tooltip, '#hsk')
-                    hsk.textContent = word.badge
-                    hsk.className = `${styles.hskBadge[word.hsk]} ${styles.hsk}`
-
-                    // Translations
-                    const translations = query(tooltip, '#translations')
-                    translations.innerHTML = word.translations.map((item) => {
-                      return `<p>${item}</p>`
-                    }).join('')
-
+                  const found = instance.reference.getAttribute('data-word')
+                  const details = JSON.parse(found)
+                  if (instance && found) {
                     tooltipBox.appendChild(
                       h('div.flex', [
                         h('button.px-2.py-1.inline-flex.bg-blue-400.text-white.rounded-md.add-to-flashcards-button.focus:shadow-outline.font-bold.ml-auto', {
                           onclick: (e) => {
-                            console.log('Popover button clicked!', word)
+                            console.log('Popover button clicked!', details)
                           }
                         }, 'Add to flashcards')
                       ])
                     )
-
                     instance.setContent(tooltip)
                   }
                 },
                 delay: [0, 0]
               }
             }
+          }
+        },
+        parserOptions: {
+          parser: (render, sentence, renderId) => {
+            const parse = (str) => {
+              const punctuations = '\\[' + '\\!' + '\\"' + '\\#' + '\\$' +
+          '\\%' + '\\&' + '\\\'' + '\\(' + '\\)' +
+          '\\*' + '\\+' + '\\,' + '\\\\' + '\\-' +
+          '\\.' + '\\/' + '\\:' + '\\;' + '\\<' +
+          '\\=' + '\\>' + '\\?' + '\\@' + '\\[' +
+          '\\]' + '\\^' + '\\_' + '\\`' + '\\{' +
+          '\\|' + '\\}' + '\\~' + '\\]'
+
+              const regex = new RegExp(
+                '\\s*' +
+           '(' +
+             '\\.{3}' +
+           '|' +
+             '\\w+\\-\\w+' +
+           '|' +
+             '\\w+\'(?:\\w+)?' +
+           '|' +
+             '\\w+' +
+           '|' +
+             '[' + punctuations + ']' +
+           ')'
+              )
+
+              const grep = (ary, filt) => {
+                const result = []
+                for (let i = 0, len = ary.length; i++ < len;) {
+                  const member = ary[i] || ''
+                  if (filt && (typeof filt === 'function') ? filt(member) : member) {
+                    result.push(member)
+                  }
+                }
+                return result
+              }
+
+              const grepped = grep(str.split(regex))
+              return grepped
+            }
+
+            window.$kadukadu.parse = parse
+            const parsed = parse(sentence)
+            return render(parsed, renderId)
           }
         }
       })
@@ -219,12 +219,12 @@ export default defineComponent({
        * After initialization we append elements to DOM by caling the render function returned.
        */
       const render = await init()
-      render('那假如说有一天就是没有我吃饭的一个情况，那我们会怎么做呢?')
+      render('Goldilocks was very tired by this time, she went upstairs to the bedroom. She lay down in the first bed, but it was too hard. Then she lay in the second bed, but it was too soft. Then she lay down in the third bed and it was just right. Goldilocks fell asleep.')
 
       let count = 0
       const interval = setInterval(() => {
         // target.lastChild.remove()
-        render('那假如说有一天就是没有我吃饭的一个情况，那我们会怎么做呢?')
+        render('Goldilocks was very tired by this time, she went upstairs to the bedroom. She lay down in the first bed, but it was too hard. Then she lay in the second bed, but it was too soft. Then she lay down in the third bed and it was just right. Goldilocks fell asleep.')
         count++
         if (count === 5) clearInterval(interval)
       }, 2000)

@@ -42,19 +42,35 @@ const PARSER_DEFAULT_OPTIONS = {
  * @param {ParserOptions} options
  * @returns {(string: String) => HTMLParagraphElement} parser function
  */
-export const createSentenceParser = (parserOptions) => {
+export const createSentenceParser = (_options) => {
   if (!('$kadukadu' in window)) {
     throw new Error('Cannot create parser instance without initializing kadukadu')
   }
 
-  const options = merge(PARSER_DEFAULT_OPTIONS, parserOptions)
+  const options = merge(PARSER_DEFAULT_OPTIONS, _options)
   const { dictionary } = window.$kadukadu
 
-  let renderId = 1
+  let renderId = 0
 
   const render = createRenderer(options.renderer)
 
   /** Default Parser function for Chinese */
+
+  /** Parser function */
+  if (_options?.parserOptions?.parser) {
+    /**
+     * If user provides a custom parser for a different language
+     * @param {String} sentence String
+     */
+    const parse = (sentence) => {
+      ++renderId
+      return _options?.parserOptions?.parser(render, sentence, renderId)
+    }
+
+    window.$kadukadu.parse = parse
+    return parse
+  }
+
   const parse = (sentence) => {
     const parsed = []
     let word
