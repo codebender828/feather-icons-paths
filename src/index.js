@@ -1,1 +1,6 @@
 export { createKadukadu } from './kadukadu'
+export * from './utils/renderer'
+export * from './utils/parser'
+export * from './utils/popover'
+export * from './utils/css'
+export * from './utils/translations'

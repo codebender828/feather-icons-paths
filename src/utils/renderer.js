@@ -5,12 +5,32 @@ import { useId } from './generators'
 import initializeObserver from './observer'
 import { createPopoverInstance } from './popover'
 
-export const punctuationMarks = ['.', '。', '.', ',', '!', '-', '_', '&', '*', ';', ':', '?', '+', '{', '}', '[', ']', '|', '《', '》', '：', '"', '；', '`', '<', '>']
+export const punctuationMarks = ['.', '...', '。', '.', ',', '!', '-', '_', '&', '*', ';', ':', '?', '+', '{', '}', '[', ']', '|', '《', '》', '：', '"', '；', '`', '<', '>']
 export const isPunctuationMark = char => punctuationMarks.includes(char)
 
 const alphanumeric = /^[0-9a-zA-Z]+$/
 export const isAlphanumeric = char => char && char.match(alphanumeric)
 const escapePopover = (punc) => h('span.kadukadu-punctuation', punc)
+
+const hitsCache = {}
+
+/** Records the counts of each word */
+export const captureHit = (word) => {
+  if (isPunctuationMark(word)) return
+  if (typeof word === 'undefined') return
+
+  if (typeof hitsCache[word] !== 'undefined') {
+    hitsCache[word] = hitsCache[word] + 1
+  } else {
+    hitsCache[word] = 1
+  }
+}
+
+/** Reads teh count of all words */
+export const getHits = () => hitsCache
+
+/** Reads the count of one word */
+export const getHit = (word) => hitsCache[word]
 
 /**
  * Creates render function for words returned from parser
@@ -69,6 +89,7 @@ export const createRenderer = (options) => {
     if (options.transliteration) {
       const nodes = sentence.map(word => {
         const _word = Array.isArray(word) ? word[0] : word
+        captureHit(word.text)
         if (
           isPunctuationMark(_word.text) ||
           (translationStrategy.startsWith('zh') && isAlphanumeric(_word.text))

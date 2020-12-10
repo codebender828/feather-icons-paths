@@ -53,10 +53,9 @@ export const createSentenceParser = (parserOptions) => {
   let renderId = 1
 
   const render = createRenderer(options.renderer)
-  /** Parser function */
+
+  /** Default Parser function for Chinese */
   const parse = (sentence) => {
-    console.log(sentence)
-    ++renderId
     const parsed = []
     let word
 
@@ -104,8 +103,17 @@ export const createSentenceParser = (parserOptions) => {
       }
     }
 
+    return parsed
+  }
+
+  // Bind parse function to kadukadu object
+  window.$kadukadu.parse = parse
+
+  const parser = (sentence) => {
+    ++renderId
+    const parsed = parse(sentence)
     return render(parsed, renderId)
   }
 
-  return parse
+  return parser
 }

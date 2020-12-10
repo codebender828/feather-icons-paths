@@ -87,7 +87,7 @@
 
 <script>
 import { defineComponent, inject, onMounted, ref } from 'vue'
-import { createKadukadu } from '@akkadu/kadukadu'
+import { createKadukadu, getHits } from '@akkadu/kadukadu'
 import h from 'hyperscript'
 
 const query = (...args) => {
@@ -111,6 +111,8 @@ export default defineComponent({
 
     onMounted(async () => {
       const { init } = createKadukadu({
+        sourceLanguage: 'zh',
+        targetLanguage: 'en',
         parserOptions: {},
         onProgress: (value, total) => {
           progress.value = parseInt((value / total) * 100, 0)
@@ -226,6 +228,10 @@ export default defineComponent({
         count++
         if (count === 5) clearInterval(interval)
       }, 2000)
+
+      setTimeout(() => {
+        console.log(getHits())
+      }, 12000)
 
       on('sentence-generated', ({ sentence }) => {
         render(sentence)
