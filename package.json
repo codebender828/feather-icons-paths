@@ -1,13 +1,14 @@
 {
-  "name": "feather-icons-js",
+  "name": "feather-icons-paths",
   "version": "0.0.0",
-  "description": "Feather icons objects as tree-shakable values",
+  "description": "Feather icons exported as paths",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
   "typings": "dist/types/index.d.ts",
   "repository": "https://github.com/Akkadu/kadukadu",
   "author": "codebender828 <jonas@akkadu-team.com>",
+  "sideEffects": false,
   "license": "MIT",
   "private": false,
   "files": [

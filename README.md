@@ -1,138 +1,65 @@
-# 🥮 Kadukadu
-Akkadu's popover dictionary for language learning
+# 🏂 Feather Icon Paths
+Based on the work done by [Cole Bemis](https://twitter.com/colebemis) on [Feather Icons](https://feathericons.com), by converting all feather icons to path variables along with some other low-level data.
+
+The exported icon data structure is similar to FontAwesome's JS object pattern.
 
 ## Installation
 ```
-yarn add @akkadu/kadukadu
+yarn add feather-icons-paths
 ```
 
 ## Usage
 ```js
-import { createKadukadu } from '@akkadu/kadukadu'
+import { feActivity, feArrowUp } from 'feather-icons-js'
 
-const { init } = createKadukadu({
-  sourceLanguage: 'zh',
-  targetLanguage: 'en',
-  renderer: {
-    target: 'target', // id of element to print text
-    transliteration: true, // determines whether to render transliteration (pinyin) nodes
-  }
-})
-
-// After initialization we append elements to DOM by calling the returned render function.
-const render = await init()
-
-// Appends nodes to the target with translation and popover listeners
-render('之前有很多人问学好前端需要学习哪些 js 库, 主流框架应该学 vue 还是 react ? 针对这些问题, 笔者来说说自己的看法和学习总结.')
-```
-
-### `createKadukadu` Options
-For the full API see [defaults.js](https://github.com/Akkadu/kadukadu/blob/main/src/utils/defaults.js)
-
-```js
+console.log(feActivity)
+/**
 {
-  /**
-   * Producer language
-   *  @type {String}
-   * */
-  sourceLanguage: 'zh',
-  /**
-   * Consumer language
-   * @type {String}
-   * */
-  targetLanguage: 'en',
-  /**
-   * Plugins are used to modify the behaviour of the sentence parser.
-   * By default, the Chinese - English plugin is installed
-   * @type {Array<Function>}
-   * */
-  plugins: [],
-  /**
-   * Show HSK Levels
-   * @type {Boolean}
-   */
-  showHSK: true,
-  /**
-   * Should ignore words that are not found in the parser
-   * @type {Boolean}
-   */
-  ignoreNotFound: false,
-  /**
-   * Options for renderer
-   * @type {RendererOptions}
-   */
-  renderer: {
-    /**
-     * Standard name for pinyin
-     * @type {Boolean}
-     */
-    transliteration: true,
-    /**
-     * @type {Boolean}
-     */
-    showPopover: true,
-    /**
-     * id of the element to render nodes to
-     * @type {String}
-     */
-    target: null,
-    /**
-     * Spacing between each paragraph
-     * @type {Number}
-     */
-    lineSpacing: 5,
-    /** @type {PopoverOptions} */
-    popoverOptions: {}
-  }
+  prefix: "fe",
+  iconName: "activity",
+  icon: [
+    // width
+    24,
+    
+    // height
+    24,
+
+    // contents
+    '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>',
+    
+    // raw svg
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><path d="M22 12 L18 12 L15 21 L9 3 L6 12 L2 12"/></svg>'
+    
+    // path data
+    'M22 12 L18 12 L15 21 L9 3 L6 12 L2 12'
+  ]
 }
-```
-### Overriding the rendering scheme
-If you need an escape hatch for rendering each word in a sentence, you can over-ride the rendering scheme of Kadukadu depending on how you wish to manage the rendering of each word in Kadukadu. Using the `options.renderer.render` function. This function parameter and return types are as follows: The frst argument `h` is `hyperscript`'s `document.createElement`. You can also ignore it and instead call `document.createElement` for yourself.
 
-`(h: (string, {}) => HTMLElement, sentence: KadukaduWord[], id: Number) => [rendered: HTMLElement, sentence: KadukaduWord[]]`.
-```js
-import { createKadukadu } from '@akkadu/kadukadu'
-
-const { init } = createKadukadu({
-  // ...
-  renderer: {
-    target: 'target', // id of element to print text
-    render(h, sentence, i) {
-      return h('p', {
-        'data-custom-sentence-id': id
-        // Here we map each word in the sentence and place inside a span
-      }, sentence.map(word => h('span', {
-        'data-word': JSON.stringify(word),
-        'data-kk-word': ''
-      }, word.text)))
-    }
-  }
-})
-```
-> ⚠️ Warning: Using the `render` option, will completely override the default popover settings for the rendered sentence and make them unavailable. To re-enable popovers, you need to configure the `options.renderer.popoverOptions.tippy` property yourself. See the `tippy` options from `tippy.js` here: https://atomiks.github.io/tippyjs/v6/all-props/
-
-## Development
-Project setup
-### Install all dependencies
-```bash
-yarn install
-```
-### Development build
-```bash
-yarn dev
-```
-### Development UI playground
-```bash
-yarn playground
-```
-### Production build
-```bash
-yarn build
+ * /
 ```
 
+## 🤝 Contributing
+Here's our contribution [guide.](https://github.com/codebender828/feather-icons-paths/blob/main/.github/CONTRIBUTING.md)
 
-- [x] Parse sentence to {Array} word objects with meaning + transliteration
-  - [x] If no transliteration is provided we pish an empty node
-- [x] Render and append nodes to target
-- [x] Handle transliteration
-- [x] Handle Popover listeners
+Caught a mistake or want to contribute to the documentation? [Edit this page on Github](https://github.com/codebender828/feather-icons-paths/blob/main/README.md)
+
+## Related Projects
+
+ - [feather-icons](https://github.com/feathericons/feather) - Feather is a collection of simply beautiful open source icons.
+ - [vue-feather-icons](https://github.com/egoist/vue-feather-icons) - Feather icons as Vue components
+
+## License
+
+Feather Icons Paths is licensed under the [MIT License](https://github.com/codebender828/feather-icons-paths/main/LICENSE).
+
+## ❤️ Support this project
+If you like this project, please consider supporting it by buying my a coffee!
+
+<a target="_blank" href="https://www.buymeacoffee.com/dIlWof6x5">
+  <img width="200px" src="https://res.cloudinary.com/xtellar/image/upload/v1584764609/jbakebwa.dev/sponsorships/buy-me-a-coffee.png" alt="Buy me a coffee">
+</a>
+
+<center>
+  <br>
+  Made with ❤️ by <a target="_blank" href="https://twitter.com/codebender828">Jonathan Bakebwa 🇺🇬</a>
+</center>
