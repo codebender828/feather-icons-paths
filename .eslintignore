@@ -1,3 +1,4 @@
 dist
 node_modules
-_examples
+src/index.js
+playground/index.html
