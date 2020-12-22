@@ -1,6 +1,6 @@
 {
   "name": "feather-icons-paths",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Feather icons exported as paths",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
