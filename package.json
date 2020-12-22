@@ -16,7 +16,7 @@
     "src/"
   ],
   "scripts": {
-    "postinstall": "yarn link && yarn link \"feather-icons-js\"",
+    "postinstall": "yarn link && yarn link \"feather-icons-paths\"",
     "build": "concurrently yarn:build:*",
     "dev": "concurrently yarn:dev:*",
     "dev:build": "cross-env BABEL_ENV=esm babel src -d dist/esm --source-maps --watch",
