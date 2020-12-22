@@ -1,6 +1,6 @@
 {
   "name": "feather-icons-paths",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Feather icons exported as paths",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -16,7 +16,6 @@
     "src/"
   ],
   "scripts": {
-    "postinstall": "yarn link && yarn link \"feather-icons-paths\"",
     "build": "concurrently yarn:build:*",
     "dev": "concurrently yarn:dev:*",
     "dev:build": "cross-env BABEL_ENV=esm babel src -d dist/esm --source-maps --watch",
