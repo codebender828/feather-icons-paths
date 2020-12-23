@@ -17,6 +17,14 @@ const icons = Object.values(feather.icons).map(async (icon) => {
 
   const exportName = `${camelCase(`fe-${icon.name}`)}`
   const typeName = pascalCase(`feather-${icon.name}-icon-data`)
+  const { class: _class, viewBox, ...attrs } = icon.attrs
+
+  const _attrs = JSON.stringify(attrs)
+    .replace(/\{|\}/g, '')
+    .replace(/:/g, '=')
+    .replace(/\\'/g, '"')
+    .replace(/24/g, '"24"')
+    .replace(/,/g, ' ')
 
   const result = `/** @typedef {String} PathifiedSvgContent */
 /** @typedef {String} FeatherIconsPathDefinition */
@@ -31,7 +39,8 @@ const ${exportName} = {
     ${ast.attrs.height || 24},
     '${icon.contents}',
     '${pathified}',
-    '${normalizedPath.trim()}'
+    '${normalizedPath.trim()}',
+    '${_attrs}'
   ]
 }
 
