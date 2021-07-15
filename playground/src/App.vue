@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { feActivity, feArrowUp } from 'feather-icons-js'
+import { feActivity, feArrowUp } from '../../src/index'
 import { onMounted, ref } from 'vue'
 
 export default {

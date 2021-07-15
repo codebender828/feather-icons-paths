@@ -10,7 +10,7 @@ yarn add feather-icons-paths
 
 ## Usage
 ```js
-import { feActivity, feArrowUp } from 'feather-icons-js'
+import { feActivity, feArrowUp } from 'feather-icons-paths'
 
 console.log(feActivity)
 /**
