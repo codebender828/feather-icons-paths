@@ -2,11 +2,14 @@
   <div class="text-blue-400">
     Hello feather icons js
     <div v-html="arrowUp" />
+    <!-- <svg
+      v-html="feActivity[2]"
+    /> -->
   </div>
 </template>
 
 <script>
-import { feActivity, feArrowUp } from '../../src/index'
+import { feActivity, feArrowUp } from '../../dist/esm'
 import { onMounted, ref } from 'vue'
 
 export default {
@@ -17,7 +20,8 @@ export default {
     })
 
     return {
-      arrowUp
+      arrowUp,
+      feActivity
     }
   }
 }

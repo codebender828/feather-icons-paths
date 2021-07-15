@@ -4,6 +4,7 @@ const { paramCase, camelCase, pascalCase } = require('change-case')
 const { pathThatSvg } = require('path-that-svg')
 const { parse } = require('html-parse-stringify')
 const fs = require('fs-extra')
+const prettier = require('prettier')
 
 const icons = Object.values(feather.icons).map(async (icon) => {
   const pathified = await pathThatSvg(icon.toSvg())
@@ -40,7 +41,8 @@ const ${exportName} = {
     '${icon.contents}',
     '${pathified}',
     '${normalizedPath.trim()}',
-    '${_attrs}'
+    '${_attrs}',
+    ${JSON.stringify(attrs, null, 2)}
   ]
 }
 
@@ -53,15 +55,18 @@ export default ${exportName}
   }
 })
 
-Promise.all(icons).then((icons) => {
+Promise.all(icons).then(async (icons) => {
   icons.forEach(icon => {
-    const component = icon.content
+    const component = prettier.format(icon.content, { parser: 'babel', semi: false, singleQuote: true })
     const filepath = `./src/icons/${icon.name}.js`
     return fs.ensureDir(path.dirname(filepath))
       .then(() => fs.writeFile(filepath, component, 'utf8'))
   })
+
+  console.info('✨ Formatting and linting complete.\n')
   const main = icons
     .map(icon => `export { default as ${camelCase(`fe-${icon.name}`)} } from './icons/${icon.name}'`)
     .join('\n\n')
-  return fs.outputFile('./src/index.js', main, 'utf8')
+  fs.outputFile('./src/index.js', prettier.format(main, { parser: 'babel', semi: false, singleQuote: true }), 'utf8')
+  return console.info('✅ Icon paths generation complete.\n')
 })
